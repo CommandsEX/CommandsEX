@@ -1,0 +1,12 @@
+metricsEnabled: true
+defaultLanguage: [en]
+availableLanguages: [en]
+commandCooldownSeconds: 5
+database:
+  type: sqlite
+  name: commandsex
+  host: localhost
+  port: 3306
+  username: root
+  password: ""
+  prefix: cex_
