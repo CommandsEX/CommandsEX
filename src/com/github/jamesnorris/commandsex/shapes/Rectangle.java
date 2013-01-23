@@ -38,30 +38,12 @@ public class Rectangle {
 		int x2 = loc2.getBlockX(), y2 = loc2.getBlockY(), z2 = loc2.getBlockZ();
 		int x3 = loc3.getBlockX(), y3 = loc3.getBlockY(), z3 = loc3.getBlockZ();
 		int x4 = loc4.getBlockX(), y4 = loc4.getBlockY(), z4 = loc4.getBlockZ();
-		int modX = 0, highX = 0;
-		if (x < x2) {
-			modX = x;
-			highX = x2;
-		} else {
-			modX = x2;
-			highX = x;
-		}
-		int modY = 0, highY = 0;
-		if (y < y2) {
-			modY = y;
-			highY = y2;
-		} else {
-			modY = y2;
-			highY = y;
-		}
-		int modZ = 0, highZ = 0;
-		if (z < z2) {
-			modZ = z;
-			highZ = z2;
-		} else {
-			modZ = z2;
-			highZ = z;
-		}
+		int modX = (x < x2) ? x : x2;
+		int highX = (x > x2) ? x : x2;
+		int modY = (y < y2) ? y : y2;
+		int highY = (y > y2) ? y : y2;
+		int modZ = (z < z2) ? z : z2;
+		int highZ = (z > z2) ? z : z2;
 		for (int i = modX; i <= highX; i++)
 			for (int j = modY; j <= highY; j++)
 				for (int k = modZ; k <= highZ; k++) {
