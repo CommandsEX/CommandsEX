@@ -1,10 +1,9 @@
-package com.commandsex.api;
+package com.commandsex.api.annotations;
 
 /**
  * Class to handle various functionality with the Builder
- * @author iKeirNez
  */
-public @interface ABuilder {
+public @interface Builder {
     
     /**
      * @return Name of the feature to be shown in the Builder

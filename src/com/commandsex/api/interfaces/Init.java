@@ -1,10 +1,10 @@
-package com.commandsex.api;
+package com.commandsex.api.interfaces;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
 import com.commandsex.CommandsEX;
 
-public interface IInit extends IEvent {
+public interface Init extends Event {
 
     public void init(CommandsEX cex, FileConfiguration config);
     

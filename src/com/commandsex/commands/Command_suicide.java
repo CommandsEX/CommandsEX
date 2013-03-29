@@ -1,6 +1,8 @@
 package com.commandsex.commands;
 
 import com.commandsex.CommandsEX;
+import com.commandsex.api.annotations.Builder;
+import com.commandsex.api.interfaces.Command;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -9,13 +11,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
-import com.commandsex.api.ABuilder;
-import com.commandsex.api.ACommand;
-import com.commandsex.api.ICommand;
-
-@ABuilder(name = "Suicide", description = "Kill yourself!")
-@ACommand(command = "suicide", description = "Easily kill yourself, no need for lava", aliases = "kill")
-public class Command_suicide implements ICommand {
+@Builder(name = "Suicide", description = "Kill yourself!")
+@com.commandsex.api.annotations.Command(command = "suicide", description = "Easily kill yourself, no need for lava", aliases = "kill")
+public class Command_suicide implements Command {
 
     public void init(CommandsEX cex, FileConfiguration config) {
         

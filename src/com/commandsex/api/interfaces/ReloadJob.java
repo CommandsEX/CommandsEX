@@ -1,4 +1,4 @@
-package com.commandsex.api;
+package com.commandsex.api.interfaces;
 
 import com.commandsex.CommandsEX;
 

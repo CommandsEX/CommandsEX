@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 import com.commandsex.CommandsEX;
+import com.commandsex.api.interfaces.Command;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.command.CommandSender;
@@ -16,12 +17,10 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.commandsex.api.ACommand;
-import com.commandsex.api.ICommand;
 import com.commandsex.helpers.Utils;
 
-@ACommand(description = "Changes a dogs collar color at a set interval", command = "discodog")
-public class Command_discodog implements ICommand {
+@com.commandsex.api.annotations.Command(description = "Changes a dogs collar color at a set interval", command = "discodog")
+public class Command_discodog implements Command {
 
     private HashMap<Integer, DyeColor> discoDogging = new HashMap<Integer, DyeColor>();
     

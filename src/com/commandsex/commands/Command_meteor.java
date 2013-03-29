@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.commandsex.CommandsEX;
+import com.commandsex.api.interfaces.Command;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -11,10 +12,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.commandsex.api.ICommand;
 import com.commandsex.handlers.Meteor;
 
-public class Command_meteor implements ICommand {
+public class Command_meteor implements Command {
 	private Random rand = new Random();
 
 	@Override public void init(CommandsEX cex, FileConfiguration config) {

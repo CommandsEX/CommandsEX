@@ -1,10 +1,11 @@
-package com.commandsex;
+package com.commandsex.api;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.commandsex.api.DisableJob;
-import com.commandsex.api.ReloadJob;
+import com.commandsex.CommandsEX;
+import com.commandsex.api.interfaces.DisableJob;
+import com.commandsex.api.interfaces.ReloadJob;
 
 import com.commandsex.helpers.LogHelper;
 

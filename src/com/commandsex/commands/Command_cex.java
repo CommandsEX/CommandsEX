@@ -1,15 +1,13 @@
 package com.commandsex.commands;
 
 import com.commandsex.CommandsEX;
+import com.commandsex.api.interfaces.Command;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import com.commandsex.api.ACommand;
-import com.commandsex.api.ICommand;
-
-@ACommand(command = "cex", description = "Displays information about CommandsEX", aliases = "cex_about, cex_info")
-public class Command_cex implements ICommand {
+@com.commandsex.api.annotations.Command(command = "cex", description = "Displays information about CommandsEX", aliases = "cex_about, cex_info")
+public class Command_cex implements Command {
 
     public void init(CommandsEX cex, FileConfiguration config) {
         

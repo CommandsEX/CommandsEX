@@ -1,4 +1,4 @@
-package com.commandsex.api;
+package com.commandsex.api.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 /**
  * Required for any command class
  */
-public @interface ACommand {
+public @interface Command {
     
     /**
      * @return The primary command

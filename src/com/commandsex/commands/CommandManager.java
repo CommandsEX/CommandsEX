@@ -3,6 +3,7 @@ package com.commandsex.commands;
 /* BREAKABLE IMPORTS */
 import com.commandsex.CommandsEX;
 import com.commandsex.HackedCommand;
+import com.commandsex.api.interfaces.Command;
 import com.commandsex.helpers.CommandForwarder;
 import org.bukkit.craftbukkit.v1_5_R2.CraftServer;
 
@@ -16,8 +17,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 import org.reflections.Reflections;
 
-import com.commandsex.api.ACommand;
-import com.commandsex.api.ICommand;
 import com.commandsex.helpers.LogHelper;
 import com.commandsex.helpers.Utils;
 
@@ -44,13 +43,13 @@ public class CommandManager {
     public int registerCommands(){
         int ret = 0;
         Reflections reflections = new Reflections("com.commandsex.commands");
-        Set<Class<? extends ICommand>> commandClasses = reflections.getSubTypesOf(ICommand.class);
+        Set<Class<? extends Command>> commandClasses = reflections.getSubTypesOf(Command.class);
 
         for (Class<?> clazz : commandClasses){
-            Annotation anno = clazz.getAnnotation(ACommand.class);
+            Annotation anno = clazz.getAnnotation(com.commandsex.api.annotations.Command.class);
             
             if (anno != null){
-                ACommand aCmd = (ACommand) anno;
+                com.commandsex.api.annotations.Command aCmd = (com.commandsex.api.annotations.Command) anno;
                 
                 List<String> aliases = new ArrayList<String>();
                 aliases.add("cex_" + aCmd.command());
@@ -64,7 +63,7 @@ public class CommandManager {
                 hackCmd.setExecutor(new CommandForwarder());
                 
                 try {
-                    ICommand iCmd = (ICommand) clazz.newInstance();
+                    Command iCmd = (Command) clazz.newInstance();
                     iCmd.init(CommandsEX.plugin, CommandsEX.config);
                 } catch (Exception e){
                     e.printStackTrace();
@@ -73,7 +72,7 @@ public class CommandManager {
                 
                 ret++;
             } else {
-                LogHelper.logWarning("Error: class " + clazz.getName() + " does not have an ACommand annotation");
+                LogHelper.logWarning("Error: class " + clazz.getName() + " does not have an Command annotation");
                 LogHelper.logWarning("The command will not function due to this issue");
                 LogHelper.logWarning("Please alert the CommandsEX developers to this issue");
             }
