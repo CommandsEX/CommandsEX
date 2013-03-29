@@ -1,5 +1,8 @@
 package com.github.ikeirnez.commandsex.commands;
 
+/* BREAKABLE IMPORTS */
+import org.bukkit.craftbukkit.v1_5_R2.CraftServer;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -8,7 +11,6 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
-import org.bukkit.craftbukkit.v1_4_6.CraftServer;
 import org.reflections.Reflections;
 
 import com.github.ikeirnez.commandsex.CommandsEX;
