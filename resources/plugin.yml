@@ -1,4 +1,4 @@
 name: CommandsEX
-version: 2.0
-author: iKeirNez
-main: com.github.ikeirnez.commandsex.CommandsEX
+version: 1.0
+authors: iKeirNez, Jnorr44, kezz101
+main: com.commandsex.CommandsEX

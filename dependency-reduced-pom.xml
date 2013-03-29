@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.github.ikeirnez.commandsex</groupId>
+  <groupId>com.commandsex.ikeirnez.commandsex</groupId>
   <artifactId>CommandsEX</artifactId>
   <version>2.0</version>
   <build>
@@ -50,15 +50,15 @@
           <relocations>
             <relocation>
               <pattern>org.reflections</pattern>
-              <shadedPattern>com.github.ikeirnez.commandsex.libs.org.reflections</shadedPattern>
+              <shadedPattern>com.commandsex.ikeirnez.commandsex.libs.org.reflections</shadedPattern>
             </relocation>
             <relocation>
               <pattern>org.mcstats</pattern>
-              <shadedPattern>com.github.ikeirnez.commandsex.libs.org.mcstats</shadedPattern>
+              <shadedPattern>com.commandsex.ikeirnez.commandsex.libs.org.mcstats</shadedPattern>
             </relocation>
             <relocation>
               <pattern>javassist</pattern>
-              <shadedPattern>com.github.ikeirnez.commandsex.libs.javassist</shadedPattern>
+              <shadedPattern>com.commandsex.ikeirnez.commandsex.libs.javassist</shadedPattern>
             </relocation>
           </relocations>
         </configuration>
