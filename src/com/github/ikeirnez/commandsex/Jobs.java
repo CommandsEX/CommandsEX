@@ -1,9 +1,10 @@
 package com.github.ikeirnez.commandsex;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.bukkit.configuration.file.FileConfiguration;
+import com.github.ikeirnez.commandsex.api.DisableJob;
+import com.github.ikeirnez.commandsex.api.ReloadJob;
 
 import com.github.ikeirnez.commandsex.helpers.LogHelper;
 
@@ -13,41 +14,37 @@ import com.github.ikeirnez.commandsex.helpers.LogHelper;
  */
 public class Jobs {
 
-    private static HashMap<Class<?>, String> reloadJobs = new HashMap<Class<?>, String>();
-    private static HashMap<Class<?>, String> disableJobs = new HashMap<Class<?>, String>();
+    private static List<ReloadJob> reloadJobs = new ArrayList<ReloadJob>();
+    private static List<DisableJob> disableJobs = new ArrayList<DisableJob>();
     
     /**
-     * Adds a method to be executed when the plugin is reloaded
-     * The method must take the parameters CommandsEX and FileConfiguration
-     * @param clazz The class the executed method is located in
-     * @param method The name of the method to be executed on plugin reload
+     * Used when a feature needs to execute code when the plugin is reloaded
+     *
+     * @param reloadJob The class to execute the reload job for
      */
-    public static void addReloadJob(Class<?> clazz, String method){
-        reloadJobs.put(clazz, method);
+    public static void addReloadJob(ReloadJob reloadJob){
+        reloadJobs.add(reloadJob);
     }
     
     /**
-     * Adds a method to be executed when the plugin is disabled
-     * The method must take the parameters CommandsEX and FileConfiguration
-     * @param clazz The class the executed method is located in
-     * @param method The name of the method to be executed on plugin disable
+     * Used when a feature needs to execute code when the plugin is disabled
+     *
+     * @param disableJob The class to execute the disable job for
      */
-    public static void addDisableJob(Class<?> clazz, String method){
-        disableJobs.put(clazz, method);
+    public static void addDisableJob(DisableJob disableJob){
+        disableJobs.add(disableJob);
     }
     
     /**
      * Executes the reload jobs, this should ONLY be executed when the plugin is actually reloading
      */
     public static void doReloadJobs(){
-        for (Class<?> clazz : reloadJobs.keySet()){
-            String methodName = reloadJobs.get(clazz);
+        for (ReloadJob reloadJob : reloadJobs){
             try {
-                Method m = clazz.getDeclaredMethod(methodName, CommandsEX.class, FileConfiguration.class);
-                m.invoke(null, CommandsEX.plugin, CommandsEX.plugin.getConfig());
-            } catch (Exception e) {
+                reloadJob.onReload(CommandsEX.plugin);
+            } catch (Exception e){
                 e.printStackTrace();
-                LogHelper.logSevere("Error while executing reload job for class " + clazz.getName() + " method " + methodName);
+                LogHelper.logSevere("Error while executing reload job for class " + reloadJob.getClass().getName());
             }
         }
     }
@@ -56,13 +53,12 @@ public class Jobs {
      * Executes the disable jobs, this should ONLY be executed when the plugin is actually disabling
      */
     public static void doDisableJobs(){
-        for (Class<?> clazz : disableJobs.keySet()){
-            String methodName = reloadJobs.get(clazz);
+        for (DisableJob disableJob : disableJobs){
             try {
-                Method m = clazz.getDeclaredMethod(methodName, CommandsEX.class, FileConfiguration.class);
-                m.invoke(null, CommandsEX.plugin, CommandsEX.plugin.getConfig());
-            } catch (Exception e) {
-                LogHelper.logSevere("Error while executing disable job for class " + clazz.getName() + " method " + methodName);
+                disableJob.onDisable(CommandsEX.plugin);
+            } catch (Exception e){
+                e.printStackTrace();
+                LogHelper.logSevere("Error while executing disable job for class " + disableJob.getClass().getName());
             }
         }
     }
