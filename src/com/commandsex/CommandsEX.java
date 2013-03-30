@@ -147,7 +147,7 @@ public class CommandsEX extends JavaPlugin {
         for (Class<? extends EnableJob> clazz : enableJobs){
             try {
                 EnableJob enableJob = (EnableJob) clazz.newInstance();
-                enableJob.onEnable();
+                Jobs.addEnableJob(enableJob);
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
@@ -186,10 +186,12 @@ public class CommandsEX extends JavaPlugin {
                 e.printStackTrace();
             }
         }
+
+        Jobs.executeEnableJobs();
     }
 
     public void onDisable(){
-        Jobs.doDisableJobs();
+        Jobs.executeDisableJobs();
         database.close();
     }
 }
