@@ -17,11 +17,7 @@ import com.commandsex.handlers.Meteor;
 public class Command_meteor implements Command {
 	private Random rand = new Random();
 
-	@Override public void init(CommandsEX cex, FileConfiguration config) {
-	    
-	}
-
-	@Override public boolean run(CommandSender sender, String[] args, String alias, CommandsEX cex, FileConfiguration config) {
+	public boolean run(CommandSender sender, String[] args, String alias) {
         if (!(sender instanceof Player)){
             sender.sendMessage(ChatColor.RED + "This command can only be used in-game");
             return true;

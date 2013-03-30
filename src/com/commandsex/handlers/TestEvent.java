@@ -1,15 +1,14 @@
 package com.commandsex.handlers;
 
 
-import com.commandsex.CommandsEX;
-import com.commandsex.api.interfaces.Event;
-import com.commandsex.api.interfaces.Init;
+import com.commandsex.api.interfaces.DisableJob;
+import com.commandsex.api.interfaces.EnableJob;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-public class TestEvent implements Event, Init {
+public class TestEvent implements EnableJob, DisableJob, Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(AsyncPlayerChatEvent e){
@@ -17,8 +16,12 @@ public class TestEvent implements Event, Init {
     }
 
     @Override
-    public void init(CommandsEX cex, FileConfiguration config) {
-        
+    public void onEnable() {
+        System.out.println("Test Enabling");
     }
-    
+
+    @Override
+    public void onDisable() {
+        System.out.println("Test Disabling");
+    }
 }

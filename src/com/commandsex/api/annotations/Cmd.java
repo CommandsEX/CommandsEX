@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 /**
  * Required for any command class
  */
-public @interface Command {
+public @interface Cmd {
     
     /**
      * @return The primary command

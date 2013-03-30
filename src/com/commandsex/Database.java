@@ -12,44 +12,75 @@ import java.util.Date;
 import java.util.List;
 
 import com.commandsex.helpers.LogHelper;
+import com.commandsex.helpers.Utils;
 
 public class Database {
 
-    public enum DBType {
+    public enum DatabaseType {
         SQLITE(0),
         MYSQL(1);
 
-        private int code;
+        private int id;
 
-        private DBType(int code){
-            this.code = code;
+        private DatabaseType(int id){
+            this.id = id;
         }
 
-        public int getDBTypeID(){
-            return code;
+        /**
+         * Returns the ID of the database type
+         * @return The database ID
+         */
+        public int getId(){
+            return id;
+        }
+
+        /**
+         * Matches a string to a DatabaseType
+         * @param string The DatabaseType name or id
+         * @return The DatabaseType, null if not found
+         */
+        public static DatabaseType fromString(String string){
+            DatabaseType databaseType = null;
+
+            if (Utils.isInt(string)){
+                databaseType = values()[Integer.parseInt(string)];
+            } else {
+                for (DatabaseType type : values()){
+                    if (string.equalsIgnoreCase(type.name())){
+                        databaseType = type;
+                        break;
+                    }
+                }
+            }
+
+            return databaseType;
+        }
+
+        public static DatabaseType fromId(int id){
+            return values()[id];
         }
     }
 
-    private CommandsEX p = CommandsEX.plugin;
+    private CommandsEX commandsEX = CommandsEX.plugin;
     private transient Connection conn;
     private String prefix = "cex_";
     private String databaseName;
-    private DBType dbType;
+    private DatabaseType databaseType;
     private boolean connected = false;
 
     /**
-     * Create a new SQLITE database connection
+     * Creates a new SQLITE database connection
      * @param databaseName The name of the database, default commandsex
      * @param prefix All tables created by CommandsEX will be prefix with this, default cex_
      */
     public Database(String databaseName, String prefix){
-        dbType = DBType.SQLITE;
+        databaseType = DatabaseType.SQLITE;
         this.databaseName = databaseName;
-        
+
         try {
             // this will throw an error if for some reason the JDBC class is unavailable
             Class.forName("org.sqlite.JDBC");
-            conn = DriverManager.getConnection("jdbc:sqlite:" + p.getDataFolder() + File.separatorChar + databaseName + ".db");
+            conn = DriverManager.getConnection("jdbc:sqlite:" + commandsEX.getDataFolder() + File.separatorChar + databaseName + ".db");
             connected = true;
         } catch (Exception e){
             e.printStackTrace();
@@ -60,7 +91,7 @@ public class Database {
     }
 
     /**
-     * Create a new MYSQL database connection
+     * Creates a new MYSQL database connection
      * @param databaseName The name of the database, default commandsex
      * @param username The username to the database, default root
      * @param password The password to the database, default ""
@@ -69,7 +100,7 @@ public class Database {
      * @param prefix All tables created by CommandsEX will be prefix with this, default cex_
      */
     public Database(String databaseName, String username, String password, String host, String port, String prefix){
-        dbType = DBType.MYSQL;
+        databaseType = DatabaseType.MYSQL;
 
         try {
             // this will throw an error if for some reason the Driver class is unavailable
@@ -96,8 +127,8 @@ public class Database {
      * Gets the type of database this is
      * @return The type of database this is
      */
-    public DBType getType(){
-        return dbType;
+    public DatabaseType getType(){
+        return databaseType;
     }
 
     /**

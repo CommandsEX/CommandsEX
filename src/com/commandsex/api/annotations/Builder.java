@@ -28,9 +28,9 @@ public @interface Builder {
     String depends() default "";
     
     /**
-     * Commands, Events, Init's this may depend on, e.g. /discodog might depend on the entity selector event
+     * Commands, Events, EnableJob's this may depend on, e.g. /discodog might depend on the entity selector event
      * Separated by #####
-     * @return Commands, Events, Init's this may depend on
+     * @return Commands, Events, EnableJob's this may depend on
      */
     String linked() default "";
 }

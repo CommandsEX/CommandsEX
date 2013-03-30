@@ -4,11 +4,12 @@ import java.util.HashMap;
 import java.util.Random;
 
 import com.commandsex.CommandsEX;
+import com.commandsex.api.annotations.Cmd;
 import com.commandsex.api.interfaces.Command;
+import com.commandsex.api.interfaces.EnableJob;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -19,16 +20,16 @@ import org.bukkit.scheduler.BukkitTask;
 
 import com.commandsex.helpers.Utils;
 
-@com.commandsex.api.annotations.Command(description = "Changes a dogs collar color at a set interval", command = "discodog")
-public class Command_discodog implements Command {
+@Cmd(description = "Changes a dogs collar color at a set interval", command = "discodog")
+public class Command_discodog implements Command, EnableJob {
 
     private HashMap<Integer, DyeColor> discoDogging = new HashMap<Integer, DyeColor>();
     
-    public void init(CommandsEX cex, FileConfiguration config) {
+    public void onEnable() {
         CommandsEX.pluginManager.addPermission(new Permission("cex.discodog", "Allows access to /discodog", PermissionDefault.OP));
     }
 
-    public boolean run(CommandSender sender, String[] args, String alias, CommandsEX cex, FileConfiguration config) {
+    public boolean run(CommandSender sender, String[] args, String alias) {
         if (!(sender instanceof Player)){
             return true;
         }
