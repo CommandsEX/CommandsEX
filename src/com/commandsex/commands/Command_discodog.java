@@ -16,18 +16,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.commandsex.helpers.Utils;
 
-@Cmd(description = "Changes a dogs collar color at a set interval", command = "discodog")
-public class Command_discodog implements Command, EnableJob {
+@Cmd(description = "Changes a dogs collar color at a set interval", command = "discodog", permission = "cex.discodog")
+public class Command_discodog implements Command {
 
     private HashMap<Integer, DyeColor> discoDogging = new HashMap<Integer, DyeColor>();
-    
-    public void onEnable() {
-        CommandsEX.pluginManager.addPermission(new Permission("cex.discodog", "Allows access to /discodog", PermissionDefault.OP));
-    }
+    public Permission discodogPerm = new Permission("cex.discodog", "Allows access to /discodog", PermissionDefault.OP);
 
     public boolean run(CommandSender sender, String[] args, String alias) {
         if (!(sender instanceof Player)){

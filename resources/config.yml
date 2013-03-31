@@ -1,6 +1,6 @@
 debug: false
 metricsEnabled: true
-defaultLanguage: [en]
+defaultLanguage: en
 availableLanguages: [en]
 commandCooldownSeconds: 5
 database:

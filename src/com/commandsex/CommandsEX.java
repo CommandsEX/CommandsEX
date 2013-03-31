@@ -47,7 +47,7 @@ public class CommandsEX extends JavaPlugin {
         config.options().copyDefaults(true);
         saveConfig();
         try {
-            new Metrics(this);
+            metrics = new Metrics(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -127,7 +127,7 @@ public class CommandsEX extends JavaPlugin {
 
                 if (instance instanceof EnableJob){
                     EnableJob enableJob = (EnableJob) instance;
-                    enableJob.onEnable(Bukkit.getPluginManager());
+                    enableJob.onEnable(getServer().getPluginManager());
                     LogHelper.logDebug("Executed enable job for " + clazz.getName());
                 }
 

@@ -13,7 +13,7 @@
         <includes>
           <include>plugin.yml</include>
           <include>config.yml</include>
-          <include>defaultLang.properties</include>
+          <include>lang_en.properties</include>
         </includes>
       </resource>
     </resources>
@@ -50,15 +50,15 @@
           <relocations>
             <relocation>
               <pattern>org.reflections</pattern>
-              <shadedPattern>com.commandsex.ikeirnez.commandsex.libs.org.reflections</shadedPattern>
+              <shadedPattern>com.commandsex.libs.org.reflections</shadedPattern>
             </relocation>
             <relocation>
               <pattern>org.mcstats</pattern>
-              <shadedPattern>com.commandsex.ikeirnez.commandsex.libs.org.mcstats</shadedPattern>
+              <shadedPattern>com.commandsex.libs.org.mcstats</shadedPattern>
             </relocation>
             <relocation>
               <pattern>javassist</pattern>
-              <shadedPattern>com.commandsex.ikeirnez.commandsex.libs.javassist</shadedPattern>
+              <shadedPattern>com.commandsex.libs.javassist</shadedPattern>
             </relocation>
           </relocations>
         </configuration>

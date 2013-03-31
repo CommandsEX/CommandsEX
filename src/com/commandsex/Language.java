@@ -1,9 +1,7 @@
 package com.commandsex;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -11,17 +9,21 @@ import java.util.List;
 import java.util.Properties;
 
 import com.commandsex.api.interfaces.EnableJob;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.commandsex.helpers.LogHelper;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.PluginManager;
 
 /**
  * All helper methods to do with languages and translations
  */
-public class Language implements EnableJob {
+public class Language implements EnableJob, Listener {
 
     private static HashMap<String, Properties> langs = new HashMap<String, Properties>();
     private static HashMap<String, String> userLangs = new HashMap<String, String>();
@@ -35,24 +37,34 @@ public class Language implements EnableJob {
                 continue;
             }
 
-            File langFile = new File(CommandsEX.plugin.getDataFolder(), "lang_" + s + ".properties");
-            if (!langFile.exists()){
-                LogHelper.logWarning("Couldn't find language file for language " + s);
-                continue;
-            }
-
             Properties lang = new Properties();
-
-            try {
-                lang.load(new FileInputStream(langFile));
-            } catch (FileNotFoundException e) {
-                // This should never be thrown as we check above whether the file exists
-                e.printStackTrace();
-                continue;
-            } catch (IOException e) {
-                e.printStackTrace();
-                LogHelper.logSevere("IO error when reading language file for language " + s);
-                continue;
+            String langFileName = "lang_" + s + ".properties";
+            File langFile = new File(CommandsEX.plugin.getDataFolder(), langFileName);
+            if (!langFile.exists()){
+                // if file isn't found, try searching the JAR for it
+                InputStream inputStream = this.getClass().getResourceAsStream("/" + langFileName);
+                if (inputStream != null){
+                    try {
+                        lang.load(inputStream);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    LogHelper.logWarning("Couldn't find language file for language " + s);
+                    continue;
+                }
+            } else {
+                try {
+                    lang.load(new FileInputStream(langFile));
+                } catch (FileNotFoundException e) {
+                    // This should never be thrown as we check above whether the file exists
+                    e.printStackTrace();
+                    continue;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    LogHelper.logSevere("IO error when reading language file for language " + s);
+                    continue;
+                }
             }
 
             langs.put(s, lang);
@@ -109,7 +121,7 @@ public class Language implements EnableJob {
      * @return The translated message
      */
     public static String getTranslationForLanguage(String language, String key, Object...args){
-        return String.format(langs.get(language).getProperty(key), args);
+        return String.format(ChatColor.translateAlternateColorCodes('&', (langs.get(language) != null ? langs.get(language).getProperty(key) : key)), args);
     }
 
     /**
@@ -120,7 +132,7 @@ public class Language implements EnableJob {
      * @return The current language of the user
      */
     public static String getUserLanguage(String user){
-        return userLangs.get(user);
+        return (userLangs.get(user) != null ? userLangs.get(user) : getDefaultLanguage());
     }
 
     /**
@@ -138,6 +150,30 @@ public class Language implements EnableJob {
      */
     public static Properties getLanguage(String lang){
         return langs.get(lang);
+    }
+
+    /**
+     * Sets a users language to be used throughout CommandsEX
+     * @param user The user to set the language
+     * @param language The language to set the users language to
+     */
+    public static void setUserLanguage(String user, String language){
+        try {
+            userLangs.put(user, language);
+
+            Database database = CommandsEX.database;
+            ResultSet resultSet = database.query_res("SELECT user FROM %prefix%userlangs WHERE user = ?", user);
+
+            if (resultSet.next()){
+                database.query("UPDATE %prefix%userlangs SET lang = ? WHERE user = ?", language, user);
+            } else {
+                database.query("INSERT INTO %prefix%userlangs VALUES ?, ?", user, language);
+            }
+
+            resultSet.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
