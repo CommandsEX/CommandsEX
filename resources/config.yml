@@ -1,3 +1,4 @@
+debug: false
 metricsEnabled: true
 defaultLanguage: [en]
 availableLanguages: [en]

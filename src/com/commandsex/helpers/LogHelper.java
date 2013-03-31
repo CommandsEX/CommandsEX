@@ -41,7 +41,9 @@ public class LogHelper {
      * @param message The message to log if debug mode is enabled
      */
     public static void logDebug(String message){
-        
+        if (CommandsEX.config.getBoolean("debug")){
+            logger.log(Level.INFO, message);
+        }
     }
 
 }
