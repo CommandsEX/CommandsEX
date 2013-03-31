@@ -119,6 +119,12 @@ public class CommandsEX extends JavaPlugin {
                 Class<?> clazz = (Class<?>) object;
                 Object instance = clazz.newInstance();
 
+                if (instance instanceof EnableJob){
+                    EnableJob enableJob = (EnableJob) instance;
+                    Jobs.addEnableJob(enableJob);
+                    LogHelper.logDebug("Registered enable job for " + clazz.getName());
+                }
+
                 if (instance instanceof com.commandsex.api.interfaces.Command){
                     Annotation annotation = clazz.getAnnotation(Cmd.class);
 
@@ -151,12 +157,6 @@ public class CommandsEX extends JavaPlugin {
                     Bukkit.getPluginManager().registerEvents(listener, this);
                     LogHelper.logDebug("Registered events for " + clazz.getName());
                     eventsRegistered++;
-                }
-
-                if (instance instanceof EnableJob){
-                    EnableJob enableJob = (EnableJob) instance;
-                    Jobs.addEnableJob(enableJob);
-                    LogHelper.logDebug("Registered enable job for " + clazz.getName());
                 }
 
                 if (instance instanceof DisableJob){
