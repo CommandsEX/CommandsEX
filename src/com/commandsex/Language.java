@@ -10,32 +10,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
+import com.commandsex.api.interfaces.EnableJob;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.commandsex.helpers.LogHelper;
+import org.bukkit.plugin.PluginManager;
 
 /**
  * All helper methods to do with languages and translations
  */
-public class Language {
+public class Language implements EnableJob {
 
     private static HashMap<String, Properties> langs = new HashMap<String, Properties>();
     private static HashMap<String, String> userLangs = new HashMap<String, String>();
     private static FileConfiguration config = CommandsEX.config;
-    
-    /**
-     * Loads all available languages when instigated
-     */
-    public Language(){
+
+    public void onEnable(PluginManager pluginManager){
         // Load available languages
         for (String s : config.getStringList("availableLanguages")){
             if (s.length() > 5){
                 LogHelper.logWarning("Language " + s + " is too long, this language file will not be available");
                 continue;
             }
-            
+
             File langFile = new File(CommandsEX.plugin.getDataFolder(), "lang_" + s + ".properties");
             if (!langFile.exists()){
                 LogHelper.logWarning("Couldn't find language file for language " + s);
@@ -116,7 +115,7 @@ public class Language {
     /**
      * Gets the user's (player's) language
      * Returns null if the player does not have a language set (possibly never joined server)
-     * 
+     *
      * @param user The user (player) to get the language for
      * @return The current language of the user
      */
