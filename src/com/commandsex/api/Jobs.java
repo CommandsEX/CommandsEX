@@ -8,6 +8,7 @@ import com.commandsex.api.interfaces.DisableJob;
 
 import com.commandsex.api.interfaces.EnableJob;
 import com.commandsex.helpers.LogHelper;
+import org.bukkit.Bukkit;
 
 /**
  * Class to handle methods that need executed when the plugin is reloaded or disabled
@@ -15,30 +16,7 @@ import com.commandsex.helpers.LogHelper;
  */
 public class Jobs {
 
-    private static List<EnableJob> enableJobs = new ArrayList<EnableJob>();
     private static List<DisableJob> disableJobs = new ArrayList<DisableJob>();
-
-    /**
-     * Used when a feature needs to execute code when the plugin is enabled
-     * @param enableJob The class to execute the enable job for
-     */
-    public static void addEnableJob(EnableJob enableJob){
-        enableJobs.add(enableJob);
-    }
-
-    /**
-     * Executes all enable jobs, this should ONLY be executed when the plugin is actually enabling
-     */
-    public static void executeEnableJobs(){
-        for (EnableJob enableJob : enableJobs){
-            try {
-                enableJob.onEnable();
-            } catch (Exception e){
-                e.printStackTrace();
-                LogHelper.logSevere("Error while executing enable job for class " + enableJob.getClass().getName());
-            }
-        }
-    }
 
     /**
      * Used when a feature needs to execute code when the plugin is disabled

@@ -36,6 +36,7 @@ public class CommandsEX extends JavaPlugin {
     public static Logger logger;
     public static Database database;
     public static PluginManager pluginManager;
+    public static Metrics metrics;
 
     private CommandMap commandMap = null;
 
@@ -45,6 +46,11 @@ public class CommandsEX extends JavaPlugin {
         config = getConfig();
         config.options().copyDefaults(true);
         saveConfig();
+        try {
+            new Metrics(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         pluginManager = getServer().getPluginManager();
 
@@ -121,8 +127,8 @@ public class CommandsEX extends JavaPlugin {
 
                 if (instance instanceof EnableJob){
                     EnableJob enableJob = (EnableJob) instance;
-                    Jobs.addEnableJob(enableJob);
-                    LogHelper.logDebug("Registered enable job for " + clazz.getName());
+                    enableJob.onEnable(Bukkit.getPluginManager());
+                    LogHelper.logDebug("Executed enable job for " + clazz.getName());
                 }
 
                 if (instance instanceof com.commandsex.api.interfaces.Command){
@@ -175,15 +181,8 @@ public class CommandsEX extends JavaPlugin {
         LogHelper.logDebug("Successfully registered " + commandsRegistered + " commands and " + eventsRegistered + " events");
 
         if (config.getBoolean("metricsEnabled")){
-            try {
-                Metrics metrics = new Metrics(this);
-                metrics.start();
-            } catch (IOException e){
-                e.printStackTrace();
-            }
+            metrics.start();
         }
-
-        Jobs.executeEnableJobs();
     }
 
     public void onDisable(){
