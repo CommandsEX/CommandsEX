@@ -9,11 +9,13 @@ import net.minecraft.server.v1_5_R2.EntityPlayer;
 import net.minecraft.server.v1_5_R2.MinecraftServer;
 import net.minecraft.server.v1_5_R2.PlayerInteractManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_5_R2.CraftServer;
 import org.bukkit.entity.Player;
 
 import com.commandsex.CommandsEX;
+import org.bukkit.permissions.Permission;
 
 public class Players {
 
@@ -132,6 +134,32 @@ public class Players {
         if (lastCommandUsage.containsKey(player)){
             return (System.currentTimeMillis() - lastCommandUsage.get(player)) / 1000 > CommandsEX.config.getInt("commandCooldownSeconds");
         } else {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if a player has a permission and sends an error message if not
+     * @param commandSender The CommandSender to check the permission for
+     * @param permission The permission to check against the CommandSender
+     * @return Does the player have the permission node?
+     */
+    public static boolean hasPermission(CommandSender commandSender, Permission permission){
+        return hasPermission(commandSender, permission.getName());
+    }
+
+    /**
+     * Checks if a player has a permission and sends an error message if not
+     * @param commandSender The CommandSender to check the permission for
+     * @param permission The permission to check against the CommandSender
+     * @return Does the player have the permission node?
+     */
+    public static boolean hasPermission(CommandSender commandSender, String permission){
+        if (commandSender.hasPermission(permission)){
+            return true;
+        } else {
+            commandSender.sendMessage(ChatColor.RED + "You don't have permission to do that");
+            commandSender.sendMessage(ChatColor.RED + "You need the permission: " + ChatColor.GOLD + permission);
             return false;
         }
     }

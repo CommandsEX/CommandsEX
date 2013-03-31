@@ -60,18 +60,18 @@ public class CommandsEX extends JavaPlugin {
             Database.DatabaseType databaseType = Database.DatabaseType.fromString(config.getString("database.type"));
 
             switch (databaseType){
-            case SQLITE :
-                database = new Database(config.getString("database.name"), config.getString("database.prefix"));
-                break;
-            case MYSQL :
-                database = new Database(config.getString("database.name"), config.getString("database.username"),
-                        config.getString("database.password"), config.getString("database.host"),
-                        config.getString("database.port"), config.getString("database.prefix"));
-                break;
-            default : 
-                LogHelper.logSevere("Invalid database type - check your config, disabling plugin...");
-                pluginManager.disablePlugin(this);
-                return;
+                case SQLITE :
+                    database = new Database(config.getString("database.name"), config.getString("database.prefix"));
+                    break;
+                case MYSQL :
+                    database = new Database(config.getString("database.name"), config.getString("database.username"),
+                            config.getString("database.password"), config.getString("database.host"),
+                            config.getString("database.port"), config.getString("database.prefix"));
+                    break;
+                default :
+                    LogHelper.logSevere("Invalid database type - check your config, disabling plugin...");
+                    pluginManager.disablePlugin(this);
+                    return;
             }
 
             // create language database if it does not already exist
@@ -93,80 +93,6 @@ public class CommandsEX extends JavaPlugin {
             e.printStackTrace();
         }
 
-        Reflections reflections = new Reflections("com.commandsex");
-
-        // Get command and listener classes
-        Set<Class<? extends com.commandsex.api.interfaces.Command>> commandClasses = reflections.getSubTypesOf(com.commandsex.api.interfaces.Command.class);
-        Set<Class<? extends Listener>> listenerClasses = reflections.getSubTypesOf(Listener.class);
-
-        // Get classes requiring jobs
-        Set<Class<? extends EnableJob>> enableJobs = reflections.getSubTypesOf(EnableJob.class);
-        Set<Class<? extends DisableJob>> disableJobs = reflections.getSubTypesOf(DisableJob.class);
-
-        // register commands
-        int commandsRegistered = 0;
-        for (Class<?> clazz : commandClasses){
-            Annotation annotation = clazz.getAnnotation(Cmd.class);
-
-            if (annotation != null){
-                Cmd commandAnnotation = (Cmd) annotation;
-
-                List<String> aliases = new ArrayList<String>();
-
-                // Add the command as an alias of itself, this is because each command is actually
-                // commandsRegistered as /cex_<command>, this will allows people to use /<command>
-                aliases.add(commandAnnotation.command());
-
-                if (!commandAnnotation.aliases().equals("")){
-                    aliases.addAll(Utils.separateCommaList(commandAnnotation.aliases()));
-                }
-
-                com.commandsex.Command hackCommand = new com.commandsex.Command("cex_" + commandAnnotation.command(), commandAnnotation.description(), "/<command> " + commandAnnotation.usage().trim(), aliases);
-                commandMap.register("", hackCommand);
-                hackCommand.setExecutor(new CommandForwarder());
-                commandsRegistered++;
-            } else {
-                LogHelper.logWarning("Error: class " + clazz.getName() + " does not have an Cmd annotation");
-                LogHelper.logWarning("The command will not function due to this");
-            }
-        }
-
-        // Register events
-        for (Class<? extends Listener> clazz : listenerClasses){
-            try {
-                Listener listener = (Listener) clazz.newInstance();
-                pluginManager.registerEvents(listener, this);
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // Run all enable jobs
-        for (Class<? extends EnableJob> clazz : enableJobs){
-            try {
-                EnableJob enableJob = (EnableJob) clazz.newInstance();
-                Jobs.addEnableJob(enableJob);
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // Queue disable jobs
-        for (Class<? extends DisableJob> clazz : disableJobs){
-            try {
-                DisableJob disableJob = (DisableJob) clazz.newInstance();
-                Jobs.addDisableJob(disableJob);
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
         // create the CommandsEX directory if it has not been created already
         getDataFolder().mkdirs();
         File log = new File(getDataFolder(), "log.txt");
@@ -177,6 +103,76 @@ public class CommandsEX extends JavaPlugin {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
+
+        Reflections reflections = new Reflections("com.commandsex");
+
+        List<Object> classes = new ArrayList<Object>();
+        classes.addAll(reflections.getSubTypesOf(com.commandsex.api.interfaces.Command.class));
+        classes.addAll(reflections.getSubTypesOf(Listener.class));
+        classes.addAll(reflections.getSubTypesOf(EnableJob.class));
+        classes.addAll(reflections.getSubTypesOf(DisableJob.class));
+
+        int commandsRegistered = 0;
+        int eventsRegistered = 0;
+        for (Object object : classes){
+            try {
+                Class<?> clazz = (Class<?>) object;
+                Object instance = clazz.newInstance();
+
+                if (instance instanceof com.commandsex.api.interfaces.Command){
+                    Annotation annotation = clazz.getAnnotation(Cmd.class);
+
+                    if (annotation != null){
+                        Cmd commandAnnotation = (Cmd) annotation;
+
+                        List<String> aliases = new ArrayList<String>();
+
+                        // Add the command as an alias of itself, this is because each command is actually
+                        // commandsRegistered as /cex_<command>, this will allows people to use /<command>
+                        aliases.add(commandAnnotation.command());
+
+                        if (!commandAnnotation.aliases().equals("")){
+                            aliases.addAll(Utils.separateCommaList(commandAnnotation.aliases()));
+                        }
+
+                        com.commandsex.Command hackCommand = new com.commandsex.Command("cex_" + commandAnnotation.command(), commandAnnotation.description(), "/<command> " + commandAnnotation.usage().trim(), aliases);
+                        commandMap.register("", hackCommand);
+                        hackCommand.setExecutor(new CommandForwarder());
+                        LogHelper.logDebug("Registered command " + commandAnnotation.command() + " in " + clazz.getName());
+                        commandsRegistered++;
+                    } else {
+                        LogHelper.logDebug("Error: class " + clazz.getName() + " does not have an Cmd annotation");
+                        LogHelper.logDebug("The command will not function due to this");
+                    }
+                }
+
+                if (instance instanceof Listener){
+                    Listener listener = (Listener) instance;
+                    Bukkit.getPluginManager().registerEvents(listener, this);
+                    LogHelper.logDebug("Registered events for " + clazz.getName());
+                    eventsRegistered++;
+                }
+
+                if (instance instanceof EnableJob){
+                    EnableJob enableJob = (EnableJob) instance;
+                    Jobs.addEnableJob(enableJob);
+                    LogHelper.logDebug("Registered enable job for " + clazz.getName());
+                }
+
+                if (instance instanceof DisableJob){
+                    DisableJob disableJob = (DisableJob) instance;
+                    Jobs.addDisableJob(disableJob);
+                    LogHelper.logDebug("Registered disable job for " + clazz.getName());
+                }
+
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        LogHelper.logDebug("Successfully registered " + commandsRegistered + " commands and " + eventsRegistered + " events");
 
         if (config.getBoolean("metricsEnabled")){
             try {
@@ -193,5 +189,10 @@ public class CommandsEX extends JavaPlugin {
     public void onDisable(){
         Jobs.executeDisableJobs();
         database.close();
+    }
+
+    public void reload(){
+        reloadConfig();
+        LogHelper.logInfo("Reloaded CommandsEX");
     }
 }

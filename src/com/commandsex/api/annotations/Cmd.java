@@ -29,7 +29,7 @@ public @interface Cmd {
     String aliases() default "";
     
     /**
-     * @return The permission node required for the command, don't forget to add this permission in init()
+     * @return The permission node required for the command, don't forget to add this permission in an EnableJob
      */
     String permission() default "";
     

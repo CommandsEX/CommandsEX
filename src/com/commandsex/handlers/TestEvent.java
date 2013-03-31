@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.plugin.PluginManager;
 
 public class TestEvent implements EnableJob, DisableJob, Listener {
 
@@ -16,7 +17,7 @@ public class TestEvent implements EnableJob, DisableJob, Listener {
     }
 
     @Override
-    public void onEnable() {
+    public void onEnable(PluginManager pluginManager) {
         System.out.println("Test Enabling");
     }
 

@@ -8,12 +8,12 @@ public @interface Builder {
     /**
      * @return Name of the feature to be shown in the Builder
      */
-    String name();
+    String name() default "";
     
     /**
      * @return The description to show in the Builder
      */
-    String description();
+    String description() default "";
     
     /**
      * @return Whether we should show this as an available feature to add

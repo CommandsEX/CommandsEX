@@ -21,23 +21,22 @@ import com.commandsex.helpers.LogHelper;
  */
 public class Language {
 
-    private static HashMap<String, Properties> langs;
+    private static HashMap<String, Properties> langs = new HashMap<String, Properties>();
+    private static HashMap<String, String> userLangs = new HashMap<String, String>();
     private static FileConfiguration config = CommandsEX.config;
     
     /**
      * Loads all available languages when instigated
-     * @param plugin The CommandsEX instance
      */
-    public Language(CommandsEX plugin){
-        langs = new HashMap<String, Properties>();
-
+    public Language(){
+        // Load available languages
         for (String s : config.getStringList("availableLanguages")){
             if (s.length() > 5){
                 LogHelper.logWarning("Language " + s + " is too long, this language file will not be available");
                 continue;
             }
             
-            File langFile = new File(plugin.getDataFolder(), "lang_" + s + ".properties");
+            File langFile = new File(CommandsEX.plugin.getDataFolder(), "lang_" + s + ".properties");
             if (!langFile.exists()){
                 LogHelper.logWarning("Couldn't find language file for language " + s);
                 continue;
@@ -59,6 +58,21 @@ public class Language {
 
             langs.put(s, lang);
             LogHelper.logDebug("Successfully loaded language " + s);
+        }
+
+        // load player languages into HashMap
+        try {
+            ResultSet resultSet = CommandsEX.database.query_res("SELECT * FROM %prefix%userlangs");
+
+            while (resultSet.next()){
+                String user = resultSet.getString("user");
+                String language = resultSet.getString("lang");
+                userLangs.put(user, language);
+            }
+
+            resultSet.close();
+        } catch (SQLException e){
+            e.printStackTrace();
         }
     }
 
@@ -107,20 +121,7 @@ public class Language {
      * @return The current language of the user
      */
     public static String getUserLanguage(String user){
-        ResultSet rs = CommandsEX.database.query_res("SELECT lang FROM %prefix%userlangs WHERE user = ?", user);
-        String lang = null;
-        
-        try {
-            if (rs.next()){
-                lang = rs.getString("lang");
-            }
-            
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        
-        return lang;
+        return userLangs.get(user);
     }
 
     /**
