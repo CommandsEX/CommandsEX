@@ -11,7 +11,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -112,65 +111,73 @@ public class CommandsEX extends JavaPlugin {
 
         Reflections reflections = new Reflections("com.commandsex");
 
-        List<Object> classes = new ArrayList<Object>();
-        classes.addAll(reflections.getSubTypesOf(com.commandsex.api.interfaces.Command.class));
-        classes.addAll(reflections.getSubTypesOf(Listener.class));
-        classes.addAll(reflections.getSubTypesOf(EnableJob.class));
-        classes.addAll(reflections.getSubTypesOf(DisableJob.class));
-
         int commandsRegistered = 0;
         int eventsRegistered = 0;
-        for (Object object : classes){
+
+        // regster commands
+        for (Class<? extends com.commandsex.api.interfaces.Command> clazz : reflections.getSubTypesOf(com.commandsex.api.interfaces.Command.class)){
             try {
-                Class<?> clazz = (Class<?>) object;
-                Object instance = clazz.newInstance();
+                com.commandsex.api.interfaces.Command command = (com.commandsex.api.interfaces.Command) clazz.newInstance();
+                Annotation annotation = clazz.getAnnotation(Cmd.class);
 
-                if (instance instanceof EnableJob){
-                    EnableJob enableJob = (EnableJob) instance;
-                    enableJob.onEnable(getServer().getPluginManager());
-                    LogHelper.logDebug("Executed enable job for " + clazz.getName());
-                }
+                if (annotation != null){
+                    Cmd commandAnnotation = (Cmd) annotation;
 
-                if (instance instanceof com.commandsex.api.interfaces.Command){
-                    Annotation annotation = clazz.getAnnotation(Cmd.class);
+                    List<String> aliases = new ArrayList<String>();
 
-                    if (annotation != null){
-                        Cmd commandAnnotation = (Cmd) annotation;
+                    // Add the command as an alias of itself, this is because each command is actually
+                    // commandsRegistered as /cex_<command>, this will allows people to use /<command>
+                    aliases.add(commandAnnotation.command());
 
-                        List<String> aliases = new ArrayList<String>();
-
-                        // Add the command as an alias of itself, this is because each command is actually
-                        // commandsRegistered as /cex_<command>, this will allows people to use /<command>
-                        aliases.add(commandAnnotation.command());
-
-                        if (!commandAnnotation.aliases().equals("")){
-                            aliases.addAll(Utils.separateCommaList(commandAnnotation.aliases()));
-                        }
-
-                        com.commandsex.Command hackCommand = new com.commandsex.Command("cex_" + commandAnnotation.command(), commandAnnotation.description(), "/<command> " + commandAnnotation.usage().trim(), aliases);
-                        commandMap.register("", hackCommand);
-                        hackCommand.setExecutor(new CommandForwarder());
-                        LogHelper.logDebug("Registered command " + commandAnnotation.command() + " in " + clazz.getName());
-                        commandsRegistered++;
-                    } else {
-                        LogHelper.logDebug("Error: class " + clazz.getName() + " does not have an Cmd annotation");
-                        LogHelper.logDebug("The command will not function due to this");
+                    if (!commandAnnotation.aliases().equals("")){
+                        aliases.addAll(Utils.separateCommaList(commandAnnotation.aliases()));
                     }
-                }
 
-                if (instance instanceof Listener){
-                    Listener listener = (Listener) instance;
-                    Bukkit.getPluginManager().registerEvents(listener, this);
-                    LogHelper.logDebug("Registered events for " + clazz.getName());
-                    eventsRegistered++;
+                    com.commandsex.Command hackCommand = new com.commandsex.Command("cex_" + commandAnnotation.command(), commandAnnotation.description(), "/<command> " + commandAnnotation.usage().trim(), aliases);
+                    commandMap.register("", hackCommand);
+                    hackCommand.setExecutor(new CommandForwarder());
+                    commandsRegistered++;
+                } else {
+                    LogHelper.logDebug("Error: class " + clazz.getName() + " does not have an Cmd annotation");
+                    LogHelper.logDebug("The command will not function due to this");
                 }
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
 
-                if (instance instanceof DisableJob){
-                    DisableJob disableJob = (DisableJob) instance;
-                    Jobs.addDisableJob(disableJob);
-                    LogHelper.logDebug("Registered disable job for " + clazz.getName());
-                }
+        // register events
+        for (Class<? extends Listener> clazz : reflections.getSubTypesOf(Listener.class)){
+            try {
+                Listener listener = (Listener) clazz.newInstance();
+                Bukkit.getPluginManager().registerEvents(listener, this);
+                eventsRegistered++;
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
 
+        // queue disable jobs
+        for (Class<? extends DisableJob> clazz : reflections.getSubTypesOf(DisableJob.class)){
+            try {
+                DisableJob disableJob = (DisableJob) clazz.newInstance();
+                Jobs.addDisableJob(disableJob);
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // execute enable jobs
+        for (Class<? extends EnableJob> clazz : reflections.getSubTypesOf(EnableJob.class)){
+            try {
+                EnableJob enableJob = (EnableJob) clazz.newInstance();
+                enableJob.onEnable(Bukkit.getPluginManager());
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {

@@ -22,7 +22,7 @@ import org.bukkit.scheduler.BukkitTask;
 import com.commandsex.helpers.Utils;
 
 @Cmd(description = "Changes a dogs collar color at a set interval", command = "discodog", permission = "cex.discodog")
-public class Command_discodog implements Command {
+public class Command_discodog implements Command, EnableJob {
 
     private HashMap<Integer, DyeColor> discoDogging = new HashMap<Integer, DyeColor>();
     public Permission discodogPerm = new Permission("cex.discodog", "Allows access to /discodog", PermissionDefault.OP);
@@ -89,4 +89,8 @@ public class Command_discodog implements Command {
         return true;
     }
 
+    @Override
+    public void onEnable(PluginManager pluginManager) {
+        pluginManager.addPermission(discodogPerm);
+    }
 }

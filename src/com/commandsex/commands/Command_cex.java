@@ -18,7 +18,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 
 @Cmd(command = "cex", description = "Displays information about CommandsEX", aliases = "cex_about, cex_info, commandsex")
-public class Command_cex implements Command {
+public class Command_cex implements Command, EnableJob {
 
     public Permission permission = new Permission("cex.info", "Displays information about CommandsEX", PermissionDefault.TRUE);
     public Permission reloadPerm = new Permission("cex.reload", "Reloads CommandsEX", PermissionDefault.OP);
@@ -42,5 +42,11 @@ public class Command_cex implements Command {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void onEnable(PluginManager pluginManager) {
+        pluginManager.addPermission(permission);
+        pluginManager.addPermission(reloadPerm);
     }
 }

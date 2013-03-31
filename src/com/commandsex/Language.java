@@ -1,7 +1,6 @@
 package com.commandsex;
 
 import java.io.*;
-import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -15,15 +14,12 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.commandsex.helpers.LogHelper;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.PluginManager;
 
 /**
  * All helper methods to do with languages and translations
  */
-public class Language implements EnableJob, Listener {
+public class Language implements EnableJob {
 
     private static HashMap<String, Properties> langs = new HashMap<String, Properties>();
     private static HashMap<String, String> userLangs = new HashMap<String, String>();
