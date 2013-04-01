@@ -5,10 +5,20 @@ import java.util.List;
 
 public class Utils {
 
+    /**
+     * Checks if a string is an integer
+     * @param s The string to check
+     * @return Is the string an integer
+     */
     public static boolean isInt(String s){
         return s.matches("(-)?(\\d){1,10}(\\.(\\d){1,10})?");
     }
-    
+
+    /**
+     * Separates a comma separated list into a String List
+     * @param s The list to separate
+     * @return The separated list
+     */
     public static List<String> separateCommaList(String s){
         return Arrays.asList(s.split("\\s*,\\s*"));
     }
@@ -67,6 +77,15 @@ public class Utils {
      */
     public static String join(Object[] array, String glueString){
         return join(array, glueString, glueString);
+    }
+
+    /**
+     * Checks a string for invalid characters
+     * @param string The string to check
+     * @return Does the string contain invalid characters
+     */
+    public static boolean containsInvalidCharacters(String string){
+        return !string.matches("^[A-Za-z0-9 _.-]+$");
     }
 
 }
