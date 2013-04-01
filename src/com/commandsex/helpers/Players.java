@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.commandsex.Language;
 import net.minecraft.server.v1_5_R2.EntityPlayer;
 import net.minecraft.server.v1_5_R2.MinecraftServer;
 import net.minecraft.server.v1_5_R2.PlayerInteractManager;
@@ -19,8 +20,6 @@ import org.bukkit.permissions.Permission;
 
 public class Players {
 
-    public static HashMap<String, Long> lastCommandUsage = new HashMap<String, Long>();
-    
     /**
      * Gets a player
      *
@@ -98,44 +97,31 @@ public class Players {
         return player;
     }
 
-    public static boolean checkCommandSpam(CommandSender sender){
-        if (!(sender instanceof Player)){
+    /**
+     * Checks if a commandSender is spamming
+     * This method will send an error to the send if he/she is spamming
+     * @param commandSender The commandSender to check for spamming
+     * @return True if spamming, false if okay
+     */
+    public static boolean checkCommandSpam(CommandSender commandSender){
+        String sName = commandSender.getName();
+
+        if (!CommandForwarder.lastCommandUsage.containsKey(sName)){
+            System.out.println("Not in hash");
             return false;
         }
-        
-        return checkCommandSpam(sender.getName());
-    }
-    
-    public static boolean checkCommandSpam(String player){
-        // schedule an async task to check if all players in the lastCommandUsage HashMap are online
-        // if a player is offline he will be removed from the HashMap
-        Bukkit.getScheduler().runTaskLaterAsynchronously(CommandsEX.plugin, new Runnable() {
-            public void run() {
-                synchronized (lastCommandUsage){
-                    List<String> toRemove = new ArrayList<String>();
-                    
-                    for (String player : lastCommandUsage.keySet()){
-                        if (Bukkit.getPlayerExact(player) == null){
-                            // add player to remove queue
-                            toRemove.add(player);
-                        }
-                    }
-                    
-                    // remove players from the HashMap this way to prevent ConcurrentModificationExceptions
-                    for (String s : toRemove){
-                        lastCommandUsage.remove(s);
-                    }
-                    
-                    toRemove.clear();
-                }
-            }
-        }, 0L);
-        
-        if (lastCommandUsage.containsKey(player)){
-            return (System.currentTimeMillis() - lastCommandUsage.get(player)) / 1000 > CommandsEX.config.getInt("commandCooldownSeconds");
-        } else {
-            return false;
+
+        long time = System.currentTimeMillis() - CommandForwarder.lastCommandUsage.get(sName);
+        boolean isSpamming = time / 1000 < CommandsEX.config.getInt("commandCooldownSeconds");
+
+        System.out.println("Time " + time);
+
+        if (isSpamming){
+            commandSender.sendMessage(Language.getTranslationForSender(commandSender, "spamming", time / 1000.0));
+            System.out.println("Spamming, sent msg");
         }
+
+        return isSpamming;
     }
 
     /**

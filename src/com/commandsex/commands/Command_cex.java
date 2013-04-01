@@ -28,7 +28,7 @@ public class Command_cex implements Command, EnableJob {
         if (args.length == 0){
             if (Players.hasPermission(sender, permission)){
                 PluginDescriptionFile pluginDescriptionFile = CommandsEX.plugin.getDescription();
-                sender.sendMessage(Language.getTranslationForSender(sender, "cexInfo", pluginDescriptionFile.getVersion(), ChatColor.translateAlternateColorCodes('&', Utils.join(pluginDescriptionFile.getAuthors(), "&b, &6", "&b & &6"))));
+                sender.sendMessage(Language.getTranslationForSender(sender, "info", pluginDescriptionFile.getVersion(), ChatColor.translateAlternateColorCodes('&', Utils.join(pluginDescriptionFile.getAuthors(), "&b, &6", "&b & &6"))));
             }
 
             return true;
