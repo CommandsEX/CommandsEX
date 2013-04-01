@@ -1,6 +1,7 @@
 name: CommandsEX
 version: 1.00
 authors: [iKeirNez, Jnorr44, kezz101]
+website: http://www.commandsex.com
 main: com.commandsex.CommandsEX
 permissions:
   cex.commandspam.bypass:
