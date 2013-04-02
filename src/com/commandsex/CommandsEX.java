@@ -44,7 +44,7 @@ public class CommandsEX extends JavaPlugin {
         logger = Bukkit.getLogger();
         config = getConfig();
         config.options().copyDefaults(true);
-        saveConfig();
+
         try {
             metrics = new Metrics(this);
         } catch (IOException e) {
@@ -184,6 +184,9 @@ public class CommandsEX extends JavaPlugin {
                 e.printStackTrace();
             }
         }
+
+        config.options().copyDefaults(true);
+        saveConfig();
 
         LogHelper.logDebug("Successfully registered " + commandsRegistered + " commands and " + eventsRegistered + " events");
 
