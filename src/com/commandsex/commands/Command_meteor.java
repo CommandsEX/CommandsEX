@@ -3,13 +3,11 @@ package com.commandsex.commands;
 import java.util.List;
 import java.util.Random;
 
-import com.commandsex.CommandsEX;
-import com.commandsex.api.interfaces.Command;
+import com.commandsex.interfaces.Command;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import com.commandsex.handlers.Meteor;

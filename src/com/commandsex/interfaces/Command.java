@@ -1,4 +1,4 @@
-package com.commandsex.api.interfaces;
+package com.commandsex.interfaces;
 
 import com.commandsex.CommandsEX;
 import org.bukkit.command.CommandSender;

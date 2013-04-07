@@ -1,13 +1,17 @@
 package com.commandsex;
 
 import java.io.*;
+import java.net.URL;
+import java.security.CodeSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
-import com.commandsex.api.interfaces.EnableJob;
+import com.commandsex.interfaces.EnableJob;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -24,8 +28,61 @@ public class Language implements EnableJob {
     private static HashMap<String, Properties> langs = new HashMap<String, Properties>();
     private static HashMap<String, String> userLangs = new HashMap<String, String>();
     private static FileConfiguration config = CommandsEX.config;
+    public static File langFolder = new File(CommandsEX.plugin.getDataFolder(), "langs");
 
     public void onEnable(PluginManager pluginManager){
+        if (!langFolder.exists()){
+            langFolder.mkdir();
+        }
+
+        // Copy languages from JAR
+        CodeSource codeSource = getClass().getProtectionDomain().getCodeSource();
+        if (codeSource != null){
+            URL jar = codeSource.getLocation();
+            try {
+                ZipInputStream zipInputStream = new ZipInputStream(jar.openStream());
+
+                try {
+                    byte[] buffer = new byte[1024];
+                    ZipEntry zipEntry;
+                    while ((zipEntry = zipInputStream.getNextEntry()) != null){
+                        String name = zipEntry.getName();
+
+                       if (name.startsWith("lang") && name.endsWith(".properties")){
+                           try {
+                               File langFile = new File(langFolder, name.replaceFirst("lang/", ""));
+
+                               // if lastVersion isn't equal to this one, reset lang files
+                               if (CommandsEX.config.getString("lastVersion") != CommandsEX.plugin.getDescription().getVersion()){
+                                   langFile.renameTo(new File(langFolder, langFile.getName() + ".cexbackup"));
+                               }
+
+                               if (!langFile.exists()){
+                                   langFile.createNewFile();
+                                   FileOutputStream fileOutputStream = new FileOutputStream(langFile);
+
+                                   try {
+                                       int len;
+                                       while ((len = zipInputStream.read(buffer)) > 0){
+                                           fileOutputStream.write(buffer, 0, len);
+                                       }
+                                   } finally {
+                                       fileOutputStream.close();
+                                   }
+                               }
+                           } finally {
+                               zipInputStream.closeEntry();
+                           }
+                       }
+                    }
+                } finally {
+                    zipInputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         // Load available languages
         for (String s : config.getStringList("availableLanguages")){
             if (s.length() > 5){
@@ -35,20 +92,10 @@ public class Language implements EnableJob {
 
             Properties lang = new Properties();
             String langFileName = "lang_" + s + ".properties";
-            File langFile = new File(CommandsEX.plugin.getDataFolder(), langFileName);
+            File langFile = new File(langFolder, langFileName);
             if (!langFile.exists()){
-                // if file isn't found, try searching the JAR for it
-                InputStream inputStream = this.getClass().getResourceAsStream("/" + langFileName);
-                if (inputStream != null){
-                    try {
-                        lang.load(inputStream);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    LogHelper.logWarning("Couldn't find language file for language " + s);
-                    continue;
-                }
+                LogHelper.logWarning("Couldn't find language file for language " + s);
+                continue;
             } else {
                 try {
                     lang.load(new FileInputStream(langFile));

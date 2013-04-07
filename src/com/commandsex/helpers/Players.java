@@ -21,6 +21,27 @@ import org.bukkit.permissions.Permission;
 public class Players {
 
     /**
+     * Gets a player, sends an error the the {@link CommandSender} if player isn't found
+     *
+     * If the arg begins with x-, only a player by that exact name will be returned
+     * If the arg begins with -, this will search for an online player by that exact name, if that is not found
+     * then it will get an offline player by that exact name
+     *
+     * @param arg The players name to get
+     * @param commandSender The CommandSender to send the error to
+     * @return The player
+     */
+    public static Player getPlayer(String arg, CommandSender commandSender){
+        Player player = getPlayer(arg);
+
+        if (player == null){
+            commandSender.sendMessage(Language.getTranslationForSender(commandSender, "playerNotFound", arg));
+        }
+
+        return player;
+    }
+
+    /**
      * Gets a player
      *
      * If the arg begins with x-, only a player by that exact name will be returned
@@ -107,18 +128,14 @@ public class Players {
         String sName = commandSender.getName();
 
         if (!CommandForwarder.lastCommandUsage.containsKey(sName)){
-            System.out.println("Not in hash");
             return false;
         }
 
         long time = System.currentTimeMillis() - CommandForwarder.lastCommandUsage.get(sName);
         boolean isSpamming = time / 1000 < CommandsEX.config.getInt("commandCooldownSeconds");
 
-        System.out.println("Time " + time);
-
         if (isSpamming){
             commandSender.sendMessage(Language.getTranslationForSender(commandSender, "spamming", time / 1000.0));
-            System.out.println("Spamming, sent msg");
         }
 
         return isSpamming;
@@ -146,6 +163,20 @@ public class Players {
         } else {
             commandSender.sendMessage(ChatColor.RED + "You don't have permission to do that");
             commandSender.sendMessage(ChatColor.RED + "You need the permission: " + ChatColor.GOLD + permission);
+            return false;
+        }
+    }
+
+    /**
+     * Checks if a {@link CommandSender} is a player, if not, an error message will be sent
+     * @param commandSender The CommandSender to check
+     * @return Is the CommandSender a player
+     */
+    public static boolean checkIsPlayer(CommandSender commandSender){
+        if (commandSender instanceof Player){
+            return true;
+        } else {
+            commandSender.sendMessage(Language.getTranslationForSender(commandSender, "mustBePlayer"));
             return false;
         }
     }

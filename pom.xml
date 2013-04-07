@@ -22,11 +22,6 @@
 				<targetPath>.</targetPath>
 				<filtering>false</filtering>
 				<directory>${basedir}/resources</directory>
-				<includes>
-					<include>plugin.yml</include>
-					<include>config.yml</include>
-					<include>lang_en.properties</include>
-				</includes>
 			</resource>
 		</resources>
 		<plugins>
@@ -100,7 +95,7 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>craftbukkit</artifactId>
-			<version>1.5.1-R0.1-SNAPSHOT</version>
+			<version>1.5.1-R0.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -10,11 +10,6 @@
       <resource>
         <targetPath>.</targetPath>
         <directory>${basedir}/resources</directory>
-        <includes>
-          <include>plugin.yml</include>
-          <include>config.yml</include>
-          <include>lang_en.properties</include>
-        </includes>
       </resource>
     </resources>
     <finalName>${project.artifactId}-${project.version}</finalName>
@@ -86,7 +81,7 @@
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>craftbukkit</artifactId>
-      <version>1.5.1-R0.1-SNAPSHOT</version>
+      <version>1.5.1-R0.2-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

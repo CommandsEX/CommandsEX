@@ -1,4 +1,12 @@
-package com.commandsex.api.annotations;
+package com.commandsex.annotations;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
 
 /**
  * Class to handle various functionality with the Builder
@@ -14,11 +22,16 @@ public @interface Builder {
      * @return The description to show in the Builder
      */
     String description() default "";
+
+    /**
+     * @return The type of feature this is, can be COMMAND, EVENT, PACKAGE or MISC
+     */
+    String type();
     
     /**
-     * @return Whether we should show this as an available feature to add
+     * @return Whether this is a core feature that must be added, will show as greyed out in the Builder
      */
-    boolean show() default true;
+    boolean core() default false;
 
     /**
      * Classes this may depend on, e.g. /balance would depend on the Economy class
@@ -26,11 +39,4 @@ public @interface Builder {
      * @return Classes this may depend on
      */
     String depends() default "";
-    
-    /**
-     * Commands, Events, EnableJob's this may depend on, e.g. /discodog might depend on the entity selector event
-     * Separated by #####
-     * @return Commands, Events, EnableJob's this may depend on
-     */
-    String linked() default "";
 }

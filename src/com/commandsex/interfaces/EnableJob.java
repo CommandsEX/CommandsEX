@@ -1,4 +1,4 @@
-package com.commandsex.api.interfaces;
+package com.commandsex.interfaces;
 
 import org.bukkit.plugin.PluginManager;
 

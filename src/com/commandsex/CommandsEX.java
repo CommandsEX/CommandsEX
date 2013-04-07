@@ -1,8 +1,8 @@
 package com.commandsex;
 
 import com.commandsex.api.Jobs;
-import com.commandsex.api.interfaces.DisableJob;
-import com.commandsex.api.interfaces.EnableJob;
+import com.commandsex.interfaces.DisableJob;
+import com.commandsex.interfaces.EnableJob;
 import org.bukkit.craftbukkit.v1_5_R2.CraftServer;
 
 import java.io.File;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.commandsex.api.annotations.Cmd;
+import com.commandsex.annotations.Cmd;
 import com.commandsex.helpers.CommandForwarder;
 import com.commandsex.helpers.Utils;
 import org.bukkit.Bukkit;
@@ -115,9 +115,9 @@ public class CommandsEX extends JavaPlugin {
         int eventsRegistered = 0;
 
         // regster commands
-        for (Class<? extends com.commandsex.api.interfaces.Command> clazz : reflections.getSubTypesOf(com.commandsex.api.interfaces.Command.class)){
+        for (Class<? extends com.commandsex.interfaces.Command> clazz : reflections.getSubTypesOf(com.commandsex.interfaces.Command.class)){
             try {
-                com.commandsex.api.interfaces.Command command = (com.commandsex.api.interfaces.Command) clazz.newInstance();
+                com.commandsex.interfaces.Command command = (com.commandsex.interfaces.Command) clazz.newInstance();
                 Annotation annotation = clazz.getAnnotation(Cmd.class);
 
                 if (annotation != null){
@@ -185,6 +185,7 @@ public class CommandsEX extends JavaPlugin {
             }
         }
 
+        config.set("lastVersion", getDescription().getVersion());
         config.options().copyDefaults(true);
         saveConfig();
 

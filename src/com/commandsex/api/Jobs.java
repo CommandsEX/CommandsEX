@@ -3,12 +3,9 @@ package com.commandsex.api;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.commandsex.CommandsEX;
-import com.commandsex.api.interfaces.DisableJob;
+import com.commandsex.interfaces.DisableJob;
 
-import com.commandsex.api.interfaces.EnableJob;
 import com.commandsex.helpers.LogHelper;
-import org.bukkit.Bukkit;
 
 /**
  * Class to handle methods that need executed when the plugin is reloaded or disabled

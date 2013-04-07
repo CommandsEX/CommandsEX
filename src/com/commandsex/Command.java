@@ -10,7 +10,7 @@ public class Command extends org.bukkit.command.Command {
     private CommandExecutor exe = null;
     
     public Command(String name, String description, String usageMessage, List<String> aliases) {
-        super(name, description, ("/<command> " + usageMessage).trim(), aliases);
+        super(name, description, usageMessage.trim().replaceAll("%c%", "/" + name), aliases);
     }
 
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {

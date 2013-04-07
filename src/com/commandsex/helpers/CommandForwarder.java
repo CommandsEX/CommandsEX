@@ -1,6 +1,6 @@
 package com.commandsex.helpers;
 
-import com.commandsex.api.interfaces.Command;
+import com.commandsex.interfaces.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
@@ -15,13 +15,11 @@ public class CommandForwarder implements CommandExecutor {
      */
     public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String cmdAlias, String[] args) {
         if (!Players.checkCommandSpam(sender)){
-            System.out.println("Not spamming");
             String commandName = cmd.getName().toLowerCase().replaceFirst("cex_", "");
 
             try {
                 if (!sender.hasPermission("cex.commandspam.bypass")){
                     lastCommandUsage.put(sender.getName(), System.currentTimeMillis());
-                    System.out.println("Added to hash");
                 }
                 Class<?> clazz = Class.forName("com.commandsex.commands.Command_" + commandName);
                 Command command = (Command) clazz.newInstance();
