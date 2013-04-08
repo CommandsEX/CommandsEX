@@ -124,10 +124,17 @@ public class CommandsEX extends JavaPlugin {
                 Cmd commandAnnotation = (Cmd) annotation;
                 String cmdName = commandAnnotation.command();
                 String perm = commandAnnotation.permission();
+                String permDefault = commandAnnotation.permissionDefault();
+                PermissionDefault permissionDefault = PermissionDefault.OP;
 
                 // auto generate permission
                 if (perm.equals("")){
                     perm = "cex." + cmdName;
+                }
+
+                // set permission default
+                if (!permDefault.equals("")){
+                    permissionDefault = PermissionDefault.getByName(permDefault);
                 }
 
                 // auto add permission
