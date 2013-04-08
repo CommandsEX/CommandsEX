@@ -36,7 +36,7 @@ public class Command_tpa implements Command {
 
             Teleportation.newTpaRequest(tName, pName);
             player.sendMessage(Language.getTranslationForSender(player, "tpa", tName));
-            target.sendMessage(Language.getTranslationForSender(target, "tpaNotify", pName));
+            target.sendMessage(Language.getTranslationForSender(target, "tpaNotify", pName, pName, pName));
         }
 
         return true;
