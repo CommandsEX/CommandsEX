@@ -1,4 +1,4 @@
-package com.commandsex.api;
+package com.commandsex;
 
 import java.util.ArrayList;
 import java.util.List;
