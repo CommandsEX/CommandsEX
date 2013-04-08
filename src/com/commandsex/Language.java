@@ -30,6 +30,9 @@ public class Language implements EnableJob {
     private static FileConfiguration config = CommandsEX.config;
     public static File langFolder = new File(CommandsEX.plugin.getDataFolder(), "langs");
 
+    /**
+     * Run when CommandsEX is enabled
+     */
     public void onEnable(PluginManager pluginManager){
         if (!langFolder.exists()){
             langFolder.mkdir();

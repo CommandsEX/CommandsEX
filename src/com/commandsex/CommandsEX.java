@@ -1,6 +1,5 @@
 package com.commandsex;
 
-import com.commandsex.api.Jobs;
 import com.commandsex.interfaces.DisableJob;
 import com.commandsex.interfaces.EnableJob;
 import org.bukkit.craftbukkit.v1_5_R2.CraftServer;
@@ -124,10 +123,17 @@ public class CommandsEX extends JavaPlugin {
                 Cmd commandAnnotation = (Cmd) annotation;
                 String cmdName = commandAnnotation.command();
                 String perm = commandAnnotation.permission();
+                String permDefault = commandAnnotation.permissionDefault();
+                PermissionDefault permissionDefault = PermissionDefault.OP;
 
                 // auto generate permission
                 if (perm.equals("")){
                     perm = "cex." + cmdName;
+                }
+
+                // set permission default
+                if (!permDefault.equals("")){
+                    permissionDefault = PermissionDefault.getByName(permDefault);
                 }
 
                 // auto add permission

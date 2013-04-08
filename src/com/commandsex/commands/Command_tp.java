@@ -17,7 +17,6 @@ import org.bukkit.plugin.PluginManager;
 @Cmd(command = "tp", description = "Teleport to players or locations", aliases = "teleport, tpplayer, tele", usage = "%c% [player] <target>")
 public class Command_tp implements Command, EnableJob {
 
-    Permission tpPerm = new Permission("cex.tp", "Allows usage to /tp", PermissionDefault.OP);
     Permission tpOthersPerm = new Permission("cex.tp.others", "Allows /tp to be used on others", PermissionDefault.OP);
 
     @Override
@@ -66,7 +65,6 @@ public class Command_tp implements Command, EnableJob {
 
     @Override
     public void onEnable(PluginManager pluginManager) {
-        pluginManager.addPermission(tpPerm);
         pluginManager.addPermission(tpOthersPerm);
     }
 }
