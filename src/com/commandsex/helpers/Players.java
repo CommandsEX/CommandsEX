@@ -20,6 +20,8 @@ import org.bukkit.permissions.Permission;
 
 public class Players {
 
+    private static HashMap<String, Long> lastCommandUsage = new HashMap<String, Long>();
+
     /**
      * Gets a player, sends an error the the {@link CommandSender} if player isn't found
      *
@@ -127,11 +129,11 @@ public class Players {
     public static boolean checkCommandSpam(CommandSender commandSender){
         String sName = commandSender.getName();
 
-        if (!CommandForwarder.lastCommandUsage.containsKey(sName)){
+        if (!lastCommandUsage.containsKey(sName)){
             return false;
         }
 
-        long time = System.currentTimeMillis() - CommandForwarder.lastCommandUsage.get(sName);
+        long time = System.currentTimeMillis() - lastCommandUsage.get(sName);
         boolean isSpamming = time / 1000 < CommandsEX.config.getInt("commandCooldownSeconds");
 
         if (isSpamming){
@@ -139,6 +141,16 @@ public class Players {
         }
 
         return isSpamming;
+    }
+
+    /**
+     * Executed when a {@link CommandSender} uses a command, this is used to count time for anti-spam purposes
+     * @param sender The command sender that uses a command
+     */
+    public static void senderUseCommand(CommandSender sender){
+        if (!sender.hasPermission("cex.commandspam.bypass")){
+            lastCommandUsage.put(sender.getName(), System.currentTimeMillis());
+        }
     }
 
     /**
