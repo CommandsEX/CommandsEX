@@ -161,8 +161,7 @@ public class Players {
         if (commandSender.hasPermission(permission)){
             return true;
         } else {
-            commandSender.sendMessage(ChatColor.RED + "You don't have permission to do that");
-            commandSender.sendMessage(ChatColor.RED + "You need the permission: " + ChatColor.GOLD + permission);
+            commandSender.sendMessage(Language.getTranslationForSender(commandSender, "noPermission", permission));
             return false;
         }
     }
@@ -173,10 +172,22 @@ public class Players {
      * @return Is the CommandSender a player
      */
     public static boolean checkIsPlayer(CommandSender commandSender){
+        return checkIsPlayer(commandSender, true);
+    }
+
+    /**
+     * Checks if a {@link CommandSender} is a player, if not, an error message will be sent
+     * @param commandSender The CommandSender to check
+     * @param sendWarning Should a warning be shown if their not a player
+     * @return Is the CommandSender a player
+     */
+    public static boolean checkIsPlayer(CommandSender commandSender, boolean sendWarning){
         if (commandSender instanceof Player){
             return true;
         } else {
-            commandSender.sendMessage(Language.getTranslationForSender(commandSender, "mustBePlayer"));
+            if (sendWarning){
+                commandSender.sendMessage(Language.getTranslationForSender(commandSender, "mustBePlayer"));
+            }
             return false;
         }
     }
