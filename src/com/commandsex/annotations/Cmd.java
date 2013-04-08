@@ -24,7 +24,7 @@ public @interface Cmd {
     String description();
     
     /**
-     * @return A comma separated list of command aliases, cex_<command> will be automagically added
+     * @return A comma separated list of command aliases, cex_<command> will be automatically added
      */
     String aliases() default "";
     
@@ -32,10 +32,15 @@ public @interface Cmd {
      * @return The permission node required for the command, don't forget to add this permission in an EnableJob
      */
     String permission() default "";
-    
+
     /**
-     * @return This only needs to be used if you have 1 or more paremeters for the command, /<command> is added automagically
+     * @return The {@link org.bukkit.permissions.PermissionDefault} that the {@link org.bukkit.permissions.Permission} should use
      */
-    String usage() default "";
+    String permissionDefault() default "OP";
+
+    /**
+     * @return This only needs to be used if you have 1 or more paremeters for the command, %c% is replaced by /<command>
+     */
+    String usage() default "%c%";
     
 }

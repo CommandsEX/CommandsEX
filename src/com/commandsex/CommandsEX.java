@@ -21,6 +21,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
@@ -116,35 +118,40 @@ public class CommandsEX extends JavaPlugin {
 
         // regster commands
         for (Class<? extends com.commandsex.interfaces.Command> clazz : reflections.getSubTypesOf(com.commandsex.interfaces.Command.class)){
-            try {
-                com.commandsex.interfaces.Command command = (com.commandsex.interfaces.Command) clazz.newInstance();
-                Annotation annotation = clazz.getAnnotation(Cmd.class);
+            Annotation annotation = clazz.getAnnotation(Cmd.class);
 
-                if (annotation != null){
-                    Cmd commandAnnotation = (Cmd) annotation;
+            if (annotation != null){
+                Cmd commandAnnotation = (Cmd) annotation;
+                String cmdName = commandAnnotation.command();
+                String perm = commandAnnotation.permission();
 
-                    List<String> aliases = new ArrayList<String>();
-
-                    // Add the command as an alias of itself, this is because each command is actually
-                    // commandsRegistered as /cex_<command>, this will allows people to use /<command>
-                    aliases.add(commandAnnotation.command());
-
-                    if (!commandAnnotation.aliases().equals("")){
-                        aliases.addAll(Utils.separateCommaList(commandAnnotation.aliases()));
-                    }
-
-                    com.commandsex.Command hackCommand = new com.commandsex.Command("cex_" + commandAnnotation.command(), commandAnnotation.description(), "/<command> " + commandAnnotation.usage().trim(), aliases);
-                    commandMap.register("", hackCommand);
-                    hackCommand.setExecutor(new CommandForwarder());
-                    commandsRegistered++;
-                } else {
-                    LogHelper.logDebug("Error: class " + clazz.getName() + " does not have an Cmd annotation");
-                    LogHelper.logDebug("The command will not function due to this");
+                // auto generate permission
+                if (perm.equals("")){
+                    perm = "cex." + cmdName;
                 }
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+
+                // auto add permission
+                Permission permission = new Permission(perm, "Allows access to /" + cmdName, PermissionDefault.OP);
+                Bukkit.getPluginManager().addPermission(permission);
+
+                // register aliases
+                List<String> aliases = new ArrayList<String>();
+
+                // Add the command as an alias of itself, this is because each command is actually
+                // commandsRegistered as /cex_<command>, this will allows people to use /<command>
+                aliases.add(commandAnnotation.command());
+
+                if (!commandAnnotation.aliases().equals("")){
+                    aliases.addAll(Utils.separateCommaList(commandAnnotation.aliases()));
+                }
+
+                com.commandsex.Command hackCommand = new com.commandsex.Command("cex_" + cmdName, commandAnnotation.description(), commandAnnotation.usage().replaceAll("%c%", "/<command>").trim(), aliases);
+                commandMap.register("", hackCommand);
+                hackCommand.setExecutor(new CommandForwarder());
+                commandsRegistered++;
+            } else {
+                LogHelper.logDebug("Error: class " + clazz.getName() + " does not have an Cmd annotation");
+                LogHelper.logDebug("The command will not function due to this");
             }
         }
 
