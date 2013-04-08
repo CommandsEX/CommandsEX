@@ -26,6 +26,11 @@ public class Command_tpa implements Command {
                 return true;
             }
 
+            if (player == target){
+                player.sendMessage(Language.getTranslationForSender(player, "cannotUseOnSelf"));
+                return true;
+            }
+
             Teleportation.newTpaRequest(target.getName(), player.getName());
             player.sendMessage(Language.getTranslationForSender(player, "tpaSentTo", target.getName()));
         }

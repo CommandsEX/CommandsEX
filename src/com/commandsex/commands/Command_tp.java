@@ -35,6 +35,11 @@ public class Command_tp implements Command, EnableJob {
                     return true;
                 }
 
+                if (player == target){
+                    player.sendMessage(Language.getTranslationForSender(player, "cannotUseOnSelf"));
+                    return true;
+                }
+
                 player.teleport(target, PlayerTeleportEvent.TeleportCause.COMMAND);
                 player.sendMessage(Language.getTranslationForSender(player, "tpPlayer", target.getName()));
             } else {
@@ -55,8 +60,13 @@ public class Command_tp implements Command, EnableJob {
                     return true;
                 }
 
+                if (target1 == target2){
+                    target1.sendMessage(Language.getTranslationForSender(target1, "tpPlayersMustBeDifferent"));
+                    return true;
+                }
+
                 target1.teleport(target2, PlayerTeleportEvent.TeleportCause.COMMAND);
-                target1.sendMessage(Language.getTranslationForSender(target1, "tpPlayertoPlayer", sender.getName(), target2.getName()));
+                target1.sendMessage(Language.getTranslationForSender(target1, "tpPlayerToPlayer", sender.getName(), target2.getName()));
             }
         }
 
