@@ -54,6 +54,8 @@ public class Players {
      * @return The player
      */
     public static Player getPlayer(String arg){
+        arg = arg.toLowerCase();
+
         if (arg.startsWith("x-")){
             String name = arg.replaceFirst("x-", "");
             Player player = Bukkit.getPlayerExact(name);
@@ -73,7 +75,7 @@ public class Players {
 
             if (player == null){
                 for (Player p : Bukkit.getOnlinePlayers()){
-                    if (p.getName().contains(arg)){
+                    if (p.getName().toLowerCase().contains(arg)){
                         return p;
                     }
                 }
