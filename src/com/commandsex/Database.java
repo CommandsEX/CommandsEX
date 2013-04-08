@@ -153,7 +153,7 @@ public class Database {
             return false;
         }
         
-        query = query.replaceAll("%prefix%", prefix);
+        query = query.replaceAll("%prefix%", getPrefix());
 
         if (params.length == 0){
             try {
@@ -211,7 +211,6 @@ public class Database {
                 prep.executeBatch();
                 conn.commit();
                 prep.close();
-                prep = null;
             } catch (Exception e) {
                 e.printStackTrace();
                 LogHelper.logSevere("Error while writing to the database " + databaseName + " QUERY = " + query);
@@ -242,8 +241,7 @@ public class Database {
         if (params.length == 0){
             try {
                 Statement statement = conn.createStatement();
-                ResultSet res = statement.executeQuery(query);
-                return res;
+                return statement.executeQuery(query);
             } catch (Exception e){
                 e.printStackTrace();
                 LogHelper.logSevere("Error while writing to the database " + databaseName + " QUERY = " + query);

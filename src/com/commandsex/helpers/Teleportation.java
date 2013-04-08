@@ -8,15 +8,18 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Helper class to manage teleportation functions
  */
 public class Teleportation implements EnableJob {
 
-    private static final HashMap<String, String> tpaRequests = new HashMap<String, String>();
-    private static final HashMap<String, String> tpaHereRequests = new HashMap<String, String>();
+    /*private static final HashMap<String, String> tpaRequests = new HashMap<String, String>();
+    private static final HashMap<String, String> tpaHereRequests = new HashMap<String, String>();*/
+
+    private static final List<String> requests = new ArrayList<String>();
 
     /**
      * Creates a new tpa request for the player
@@ -24,21 +27,20 @@ public class Teleportation implements EnableJob {
      * @param from The player that sent the tpa request
      */
     public static void newTpaRequest(final String to, final String from){
-        tpaRequests.put(to, from);
+        final String request = ("TPA#####" + to + "#####" + from).toLowerCase();
+        requests.add(request);
 
         Bukkit.getScheduler().runTaskLater(CommandsEX.plugin, new Runnable() {
             @Override
             public void run() {
-                if (tpaRequests.containsKey(to)){
-                    if (tpaRequests.get(to).equalsIgnoreCase(from)){
-                        Player toPlayer = Bukkit.getPlayerExact(to);
+                if (requests.contains(request)){
+                    Player toPlayer = Bukkit.getPlayerExact(to);
 
-                        if (toPlayer != null){
-                            toPlayer.sendMessage(Language.getTranslationForSender(toPlayer, "requestTimedOut", from));
-                        }
-
-                        tpaRequests.remove(to);
+                    if (toPlayer != null){
+                        toPlayer.sendMessage(Language.getTranslationForSender(toPlayer, "requestTimedOut", from));
                     }
+
+                    requests.remove(request);
                 }
             }
         }, 20L * 60 * CommandsEX.config.getInt("tp.tpaTimeoutMins"));
@@ -50,21 +52,20 @@ public class Teleportation implements EnableJob {
      * @param from The player that sent the tpa here request
      */
     public static void newTpaHereRequests(final String to, final String from){
-        tpaHereRequests.put(to, from);
+        final String request = ("TPA-HERE#####" + to + "#####" + from).toLowerCase();
+        requests.add(request);
 
         Bukkit.getScheduler().runTaskLater(CommandsEX.plugin, new Runnable() {
             @Override
             public void run() {
-                if (tpaRequests.containsKey(to)){
-                    if (tpaRequests.get(to).equalsIgnoreCase(from)){
-                        Player toPlayer = Bukkit.getPlayerExact(to);
+                if (requests.contains(request)){
+                    Player toPlayer = Bukkit.getPlayerExact(to);
 
-                        if (toPlayer != null){
-                            toPlayer.sendMessage(Language.getTranslationForSender(toPlayer, "requestTimedOut", from));
-                        }
-
-                        tpaRequests.remove(to);
+                    if (toPlayer != null){
+                        toPlayer.sendMessage(Language.getTranslationForSender(toPlayer, "requestTimedOut", from));
                     }
+
+                    requests.remove(request);
                 }
             }
         }, 20L * 60 * CommandsEX.config.getInt("tp.tpaTimeoutMins"));
@@ -72,54 +73,54 @@ public class Teleportation implements EnableJob {
 
     /**
      * Checks if a player has a pending tpa request to accept
-     * @param player The player to check for a pending tpa request
-     * @return Does the player have a pending tpa request
+     * @param to The player the request was sent to
+     * @param from The player who sent the request
+     * @return Is there a tpa here request matching the players
      */
-    public static boolean hasTpaRequest(String player){
-        return tpaRequests.containsKey(player);
+    public static boolean hasTpaRequest(String to, String from){
+        for (String request : requests){
+            String[] parts = request.split("#####");
+            if (parts[0].equalsIgnoreCase("TPA") && parts[1].equalsIgnoreCase(to) && parts[2].equalsIgnoreCase(from)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
      * Checks if a player has a pending tpa here request to accept
-     * @param player The player to check for a pending tpa here request
-     * @return Does the player have a pending tpa here request
+     * @param to The player the request was sent to
+     * @param from The player who sent the request
+     * @return Is there a tpa here request matching the players
      */
-    public static boolean hasTpaHereRequest(String player){
-        return tpaHereRequests.containsKey(player);
+    public static boolean hasTpaHereRequest(String to, String from){
+        for (String request : requests){
+            String[] parts = request.split("#####");
+            if (parts[0].equalsIgnoreCase("TPA-HERE") && parts[1].equalsIgnoreCase(to) && parts[2].equalsIgnoreCase(from)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
      * Removes a pending tpa request
      * @param to The player that was sent the tpa request
+     * @param from The player who sent the tpa request
      */
-    public static void removeTpaRequest(String to){
-        tpaRequests.remove(to);
+    public static void removeTpaRequest(String to, String from){
+        requests.remove("tpa#####" + to.toLowerCase() + "#####" + from.toLowerCase());
     }
 
     /**
      * Removes a pending tpa here request
      * @param to The player that was sent the tpa here request
+     * @param from The player who sent the tpa here request
      */
-    public static void removeTpaHereRequest(String to){
-        tpaHereRequests.remove(to);
-    }
-
-    /**
-     * Gets the sender of a tpa request
-     * @param to The player the tpa request was sent to
-     * @return The sender of the tpa request
-     */
-    public static String getTpaRequest(String to){
-        return tpaRequests.get(to);
-    }
-
-    /**
-     * Gets the sender of a tpa here request
-     * @param to The player the tpa here request was sent to
-     * @return The sender of the tpa here request
-     */
-    public static String getTpaHereRequest(String to){
-        return tpaHereRequests.get(to);
+    public static void removeTpaHereRequest(String to, String from){
+        requests.remove("tpa-here#####" + to.toLowerCase() + "#####" + from.toLowerCase());
     }
 
     @Override

@@ -23,11 +23,7 @@ public class CommandForwarder implements CommandExecutor {
                 Command command = (Command) clazz.newInstance();
                 Cmd cmdAnno = clazz.getAnnotation(Cmd.class);
 
-                if (Players.hasPermission(sender, cmdAnno.permission())){
-                    return command.run(sender, args, cmdAlias);
-                } else {
-                    return true;
-                }
+                return !Players.hasPermission(sender, cmdAnno.permission()) || command.run(sender, args, cmdAlias);
             } catch (Throwable e){
                 e.printStackTrace();
             }

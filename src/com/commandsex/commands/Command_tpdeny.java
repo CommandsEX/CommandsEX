@@ -5,41 +5,39 @@ import com.commandsex.annotations.Cmd;
 import com.commandsex.helpers.Players;
 import com.commandsex.helpers.Teleportation;
 import com.commandsex.interfaces.Command;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@Cmd(command = "tpdeny", description = "Deny teleportation requests", aliases = "tpno, tpd, tpde", permissionDefault = "ALL")
+@Cmd(command = "tpdeny", description = "Deny teleportation requests", aliases = "tpadeny, tpno, tpd, tpde", permissionDefault = "ALL")
 public class Command_tpdeny implements Command {
     @Override
     public boolean run(CommandSender sender, String[] args, String alias) {
         if (Players.checkIsPlayer(sender)){
             Player player = (Player) sender;
+            String pName = player.getName();
 
-            if (args.length != 0){
+            if (args.length != 1){
                 return false;
             }
 
-            String pName = player.getName();
-            String targetName;
-            if (Teleportation.hasTpaRequest(pName)){
-                targetName = Teleportation.getTpaRequest(pName);
-                Teleportation.removeTpaRequest(pName);
-            } else if (Teleportation.hasTpaHereRequest(pName)){
-                targetName = Teleportation.getTpaHereRequest(pName);
-                Teleportation.removeTpaHereRequest(pName);
-            } else {
-                player.sendMessage(Language.getTranslationForSender(sender, "noRequests"));
+            Player target = Players.getPlayer(args[0], player);
+
+            if (target == null){
                 return true;
             }
 
-            Player target = Bukkit.getPlayerExact(targetName);
-
-            if (target != null){
-                target.sendMessage(Language.getTranslationForSender(target, "tpaDenyNotify", pName));
+            String tName = target.getName();
+            if (Teleportation.hasTpaRequest(pName, tName)){
+                Teleportation.removeTpaRequest(pName, tName);
+            } else if (Teleportation.hasTpaHereRequest(pName, tName)){
+                Teleportation.removeTpaHereRequest(pName, tName);
+            } else {
+                player.sendMessage(Language.getTranslationForSender(player, "noRequestFromThatPlayer", args[0]));
+                return true;
             }
 
-            player.sendMessage(Language.getTranslationForSender(player, "tpaDeny", targetName));
+            player.sendMessage(Language.getTranslationForSender(player, "tpaDeny", tName));
+            target.sendMessage(Language.getTranslationForSender(target, "tpaDenyNotify", pName));
         }
 
         return true;

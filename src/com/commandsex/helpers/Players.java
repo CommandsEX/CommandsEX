@@ -1,16 +1,13 @@
 package com.commandsex.helpers;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import com.commandsex.Language;
 import net.minecraft.server.v1_5_R2.EntityPlayer;
 import net.minecraft.server.v1_5_R2.MinecraftServer;
 import net.minecraft.server.v1_5_R2.PlayerInteractManager;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_5_R2.CraftServer;
 import org.bukkit.entity.Player;
@@ -20,7 +17,7 @@ import org.bukkit.permissions.Permission;
 
 public class Players {
 
-    private static HashMap<String, Long> lastCommandUsage = new HashMap<String, Long>();
+    private static HashMap<String, Long> lastCommandUsage = new HashMap<>();
 
     /**
      * Gets a player, sends an error the the {@link CommandSender} if player isn't found
@@ -58,9 +55,7 @@ public class Players {
 
         if (arg.startsWith("x-")){
             String name = arg.replaceFirst("x-", "");
-            Player player = Bukkit.getPlayerExact(name);
-            
-            return player;
+            return Bukkit.getPlayerExact(name);
         } else if (arg.startsWith("-")){
             String name = arg.replaceFirst("-", "");
             Player player = Bukkit.getPlayerExact(name);
@@ -108,7 +103,7 @@ public class Players {
                     if (playerName.trim().equalsIgnoreCase(name)) {
                         final MinecraftServer server = ((CraftServer) CommandsEX.plugin.getServer()).getServer();
                         final EntityPlayer entity = new EntityPlayer(server, server.getWorldServer(0), playerName, new PlayerInteractManager(server.getWorldServer(0)));
-                        player = (entity == null) ? null : (Player) entity.getBukkitEntity();
+                        player = entity.getBukkitEntity();
                         if (player != null) {
                             player.loadData();
                         } else {
@@ -116,7 +111,9 @@ public class Players {
                         }
                     }
                 }
-            } catch (final Exception e) {}
+            } catch (final Throwable throwable) {
+                throwable.printStackTrace();
+            }
         }
 
         return player;

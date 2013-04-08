@@ -137,11 +137,11 @@ public class CommandsEX extends JavaPlugin {
                 }
 
                 // auto add permission
-                Permission permission = new Permission(perm, "Allows access to /" + cmdName, PermissionDefault.OP);
+                Permission permission = new Permission(perm, "Allows access to /" + cmdName, permissionDefault);
                 Bukkit.getPluginManager().addPermission(permission);
 
                 // register aliases
-                List<String> aliases = new ArrayList<String>();
+                List<String> aliases = new ArrayList<>();
 
                 // Add the command as an alias of itself, this is because each command is actually
                 // commandsRegistered as /cex_<command>, this will allows people to use /<command>
@@ -164,37 +164,31 @@ public class CommandsEX extends JavaPlugin {
         // register events
         for (Class<? extends Listener> clazz : reflections.getSubTypesOf(Listener.class)){
             try {
-                Listener listener = (Listener) clazz.newInstance();
+                Listener listener = clazz.newInstance();
                 Bukkit.getPluginManager().registerEvents(listener, this);
                 eventsRegistered++;
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
             }
         }
 
         // queue disable jobs
         for (Class<? extends DisableJob> clazz : reflections.getSubTypesOf(DisableJob.class)){
             try {
-                DisableJob disableJob = (DisableJob) clazz.newInstance();
+                DisableJob disableJob = clazz.newInstance();
                 Jobs.addDisableJob(disableJob);
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
             }
         }
 
         // execute enable jobs
         for (Class<? extends EnableJob> clazz : reflections.getSubTypesOf(EnableJob.class)){
             try {
-                EnableJob enableJob = (EnableJob) clazz.newInstance();
+                EnableJob enableJob = clazz.newInstance();
                 enableJob.onEnable(Bukkit.getPluginManager());
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
             }
         }
 

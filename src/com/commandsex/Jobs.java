@@ -13,7 +13,7 @@ import com.commandsex.helpers.LogHelper;
  */
 public class Jobs {
 
-    private static List<DisableJob> disableJobs = new ArrayList<DisableJob>();
+    private static List<DisableJob> disableJobs = new ArrayList<>();
 
     /**
      * Used when a feature needs to execute code when the plugin is disabled

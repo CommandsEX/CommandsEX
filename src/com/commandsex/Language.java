@@ -25,8 +25,8 @@ import org.bukkit.plugin.PluginManager;
  */
 public class Language implements EnableJob {
 
-    private static HashMap<String, Properties> langs = new HashMap<String, Properties>();
-    private static HashMap<String, String> userLangs = new HashMap<String, String>();
+    private static HashMap<String, Properties> langs = new HashMap<>();
+    private static HashMap<String, String> userLangs = new HashMap<>();
     private static FileConfiguration config = CommandsEX.config;
     public static File langFolder = new File(CommandsEX.plugin.getDataFolder(), "langs");
 
@@ -167,7 +167,7 @@ public class Language implements EnableJob {
      * @return The translated message
      */
     public static String getTranslationForLanguage(String language, String key, Object...args){
-        return String.format(ChatColor.translateAlternateColorCodes('&', (langs.get(language) != null ? langs.get(language).getProperty(key) : key)), args);
+        return String.format(ChatColor.translateAlternateColorCodes('&', (getLanguage(language) != null ? getLanguage(language).getProperty(key) : key)), args);
     }
 
     /**

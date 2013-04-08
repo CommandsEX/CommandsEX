@@ -9,9 +9,9 @@ import com.commandsex.interfaces.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-@Builder(name = "tpa", description = "Request to teleport to another player", type = "COMMAND", depends = "helpers/Teleportation, commands/Command_tpaccept, commands/Command_tpdeny")
-@Cmd(command = "tpa", description = "Request to teleport to another player", usage = "%c% <player>", aliases = "tpask, tprequest")
-public class Command_tpa implements Command {
+@Builder(name = "tpahere", description = "", type = "COMMAND", depends = "commands/Command_tpaccept, commands/Command_tpdeny")
+@Cmd(command = "tpahere", description = "Request a player to teleport to you", aliases = "tpah, tpatome", usage = "%c% <player>")
+public class Command_tpahere implements Command {
     @Override
     public boolean run(CommandSender sender, String[] args, String alias) {
         if (Players.checkIsPlayer(sender)){
@@ -20,7 +20,7 @@ public class Command_tpa implements Command {
             }
 
             Player player = (Player) sender;
-            Player target = Players.getPlayer(args[0], player);
+            Player target = Players.getPlayer(args[0], sender);
 
             if (target == null){
                 return true;
@@ -34,9 +34,9 @@ public class Command_tpa implements Command {
                 return true;
             }
 
-            Teleportation.newTpaRequest(tName, pName);
+            Teleportation.newTpaHereRequests(tName, pName);
             player.sendMessage(Language.getTranslationForSender(player, "tpa", tName));
-            target.sendMessage(Language.getTranslationForSender(target, "tpaNotify", pName));
+            target.sendMessage(Language.getTranslationForSender(target, "tpaHereNotify", pName));
         }
 
         return true;

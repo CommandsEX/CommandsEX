@@ -45,7 +45,7 @@ public class Command_tp implements Command, EnableJob {
             } else {
                 return false;
             }
-        } else if (args.length == 2){
+        } else {
             if (Players.hasPermission(sender, tpOthersPerm)){
                 // Teleport player to player
                 Player target1 = Players.getPlayer(args[0], sender);
