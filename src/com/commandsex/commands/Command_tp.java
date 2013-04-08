@@ -56,7 +56,7 @@ public class Command_tp implements Command, EnableJob {
                 }
 
                 target1.teleport(target2, PlayerTeleportEvent.TeleportCause.COMMAND);
-                target1.sendMessage(Language.getTranslationForSender(sender, "tpPlayertoPlayer", sender.getName(), target2.getName()));
+                target1.sendMessage(Language.getTranslationForSender(target1, "tpPlayertoPlayer", sender.getName(), target2.getName()));
             }
         }
 
