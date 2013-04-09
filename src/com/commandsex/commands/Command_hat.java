@@ -36,8 +36,8 @@ public class Command_hat implements Command, EnableJob {
                 return true;
             }
             
-            if(player.getItemInHand().getTypeId() == 0 || !player.getItemInHand().getType().isBlock()) {
-                player.sendMessage(Language.getTranslationForSender(player, "hatOwnInvalidItem", player.getItemInHand().getType().name()));
+            if(player.getItemInHand().getTypeId() == 0 || !player.getItemInHand().getType().isSolid()) {
+                player.sendMessage(Language.getTranslationForSender(player, "hatOwnInvalidItem", Utils.getFriendlyMaterialName(player.getItemInHand().getType())));
                 return true;
             }
             
@@ -70,8 +70,8 @@ public class Command_hat implements Command, EnableJob {
                 return true;
             }
             
-            if(!Material.getMaterial(Integer.parseInt(args[0])).isBlock()) {
-                player.sendMessage(Language.getTranslationForSender(player, "hatOwnInvalidItem", Material.getMaterial(Integer.parseInt(args[0])).name()));
+            if(!Material.getMaterial(Integer.parseInt(args[0])).isSolid()) {
+                player.sendMessage(Language.getTranslationForSender(player, "hatOwnInvalidItem", Utils.getFriendlyMaterialName(Material.getMaterial(Integer.parseInt(args[0])))));
                 return true;
             }
             
@@ -108,8 +108,8 @@ public class Command_hat implements Command, EnableJob {
                 return true;
             }
             
-            if(!Material.getMaterial(Integer.parseInt(args[0])).isBlock()) {
-                player.sendMessage(Language.getTranslationForSender(player, "hatInvalidItem", Material.getMaterial(Integer.parseInt(args[0])).name(), target.getName()));
+            if(!Material.getMaterial(Integer.parseInt(args[0])).isSolid()) {
+                player.sendMessage(Language.getTranslationForSender(player, "hatInvalidItem", Utils.getFriendlyMaterialName(Material.getMaterial(Integer.parseInt(args[0]))), target.getName()));
                 return true;
             }
             
