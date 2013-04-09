@@ -22,8 +22,11 @@ public class CommandForwarder implements CommandExecutor {
                 Class<?> clazz = Class.forName("com.commandsex.commands.Command_" + commandName);
                 Command command = (Command) clazz.newInstance();
                 Cmd cmdAnno = clazz.getAnnotation(Cmd.class);
+                String permission = (cmdAnno.permission().equals("") ? "cex." + cmdAnno.command() : cmdAnno.permission());
 
-                return !Players.hasPermission(sender, cmdAnno.permission()) || command.run(sender, args, cmdAlias);
+                if (Players.hasPermission(sender, permission)){
+                    return command.run(sender, args, cmdAlias);
+                }
             } catch (Throwable e){
                 e.printStackTrace();
             }

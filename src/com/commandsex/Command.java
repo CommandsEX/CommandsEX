@@ -17,7 +17,7 @@ public class Command extends org.bukkit.command.Command {
      * @param aliases List of strings to be used as aliases to the command
      */
     public Command(String name, String description, String usageMessage, List<String> aliases) {
-        super(name, description, usageMessage.trim().replaceAll("%c%", "/" + name), aliases);
+        super(name, description, usageMessage.trim(), aliases);
     }
 
     /**
@@ -25,7 +25,12 @@ public class Command extends org.bukkit.command.Command {
      */
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if(exe != null){
-            return exe.onCommand(sender, this, commandLabel,args);
+            boolean returnValue = exe.onCommand(sender, this, commandLabel, args);
+            if (!returnValue){
+                sender.sendMessage(Language.getTranslationForSender(sender, "invalidUsage", getUsage().replaceAll("%c%", "/" + commandLabel)));
+            }
+
+            return returnValue;
         }
         
         return false;

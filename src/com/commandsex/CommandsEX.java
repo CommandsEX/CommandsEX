@@ -115,6 +115,8 @@ public class CommandsEX extends JavaPlugin {
         int commandsRegistered = 0;
         int eventsRegistered = 0;
 
+        CommandForwarder commandForwarder = new CommandForwarder();
+
         // regster commands
         for (Class<? extends com.commandsex.interfaces.Command> clazz : reflections.getSubTypesOf(com.commandsex.interfaces.Command.class)){
             Annotation annotation = clazz.getAnnotation(Cmd.class);
@@ -151,9 +153,9 @@ public class CommandsEX extends JavaPlugin {
                     aliases.addAll(Utils.separateCommaList(commandAnnotation.aliases()));
                 }
 
-                com.commandsex.Command hackCommand = new com.commandsex.Command("cex_" + cmdName, commandAnnotation.description(), commandAnnotation.usage().replaceAll("%c%", "/<command>").trim(), aliases);
+                com.commandsex.Command hackCommand = new com.commandsex.Command("cex_" + cmdName, commandAnnotation.description(), commandAnnotation.usage(), aliases);
                 commandMap.register("", hackCommand);
-                hackCommand.setExecutor(new CommandForwarder());
+                hackCommand.setExecutor(commandForwarder);
                 commandsRegistered++;
             } else {
                 LogHelper.logDebug("Error: class " + clazz.getName() + " does not have an Cmd annotation");
@@ -192,7 +194,7 @@ public class CommandsEX extends JavaPlugin {
             }
         }
 
-        config.set("lastVersion", getDescription().getVersion());
+        config.set("lastVersion", Double.parseDouble(getDescription().getVersion()));
         config.options().copyDefaults(true);
         saveConfig();
 
