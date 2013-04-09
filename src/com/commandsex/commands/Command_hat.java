@@ -25,10 +25,7 @@ public class Command_hat implements Command, EnableJob {
     
     @Override
     public boolean run(CommandSender sender, String[] args, String alias) {
-        if(!Players.checkIsPlayer(sender, true)) // Player?
-            return true;
-        
-        if(Players.checkCommandSpam(sender)) // Spamming?
+        if(!Players.checkIsPlayer(sender)) // Player?
             return true;
         
         if(args == null || args.length == 0) { // Hand on head
