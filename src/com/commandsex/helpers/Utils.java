@@ -1,5 +1,6 @@
 package com.commandsex.helpers;
 
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -98,17 +99,7 @@ public class Utils {
      * @return the friendly version of the material
      */
     public static String getFriendlyMaterialName(Material material) {
-        char[] mat = material.name().replace("_", " ").toCharArray();
-        boolean ignore = true;
-        for(int i = 0; i < mat.length; i++) {
-            if(ignore)
-                ignore = false;
-            else if(mat[i] == ' ')
-                ignore = true;
-            else
-                mat[i] = Character.toLowerCase(mat[i]);
-        }
-        return new String(mat);
+        return WordUtils.capitalize(material.name().replaceAll("_", ""));
     }
 
     /**

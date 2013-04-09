@@ -16,6 +16,10 @@ import com.commandsex.helpers.Utils;
 import com.commandsex.interfaces.Command;
 import com.commandsex.interfaces.EnableJob;
 
+/**
+ * Hat, puts a block on your head
+ * @author kezz101
+ */
 @Builder(name="hat", description="Puts a block on your head!", type="COMMAND")
 @Cmd(command = "hat", description = "Puts a block on your head!", aliases = "head", usage = "%c% [item id] [players]")
 public class Command_hat implements Command, EnableJob {
@@ -55,11 +59,10 @@ public class Command_hat implements Command, EnableJob {
         if(args.length == 1) { // Anything on head
             Player player = (Player) sender;
 
-            if(!player.hasPermission(customItem)) {
-                player.sendMessage(Language.getTranslationForSender(player, "noPermission", customItem.getName()));
+            if (!Players.hasPermission(player, customItem)){
                 return true;
             }
-            
+
             if(player.getInventory().getHelmet() != null) {
                 player.sendMessage(Language.getTranslationForSender(player, "hatOwnHeadFull"));
                 return true;
@@ -83,8 +86,7 @@ public class Command_hat implements Command, EnableJob {
         if(args.length == 2) { // Anything on anothers head
             Player player = (Player) sender, target;
 
-            if(!player.hasPermission(others)) {
-                player.sendMessage(Language.getTranslationForSender(player, "noPermission", customItem.getName()));
+            if (!Players.hasPermission(player, others)){
                 return true;
             }
             
