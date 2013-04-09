@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 public class Utils {
 
@@ -111,9 +112,14 @@ public class Utils {
         return getFriendlyMaterialName(item.getType());
     }
 
+    /**
+     * Converts an <code>InputStream</code> to a String
+     * @param stream the stream to convert
+     * @return the string
+     */
     public static String convertStreamToString(InputStream stream) {
         try {
-            return new java.util.Scanner(stream).useDelimiter("\\A").next();
+            return new Scanner(stream).useDelimiter("\\A").next();
         } catch (java.util.NoSuchElementException e) {
             return "";
         }
