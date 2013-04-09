@@ -3,6 +3,7 @@ package com.commandsex.helpers;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -117,6 +118,14 @@ public class Utils {
      */
     public static String getFriendlyItemName(ItemStack item) {
         return getFriendlyMaterialName(item.getType());
+    }
+
+    public static String convertStreamToString(InputStream stream) {
+        try {
+            return new java.util.Scanner(stream).useDelimiter("\\A").next();
+        } catch (java.util.NoSuchElementException e) {
+            return "";
+        }
     }
 
 }
