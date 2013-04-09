@@ -1,5 +1,8 @@
 package com.commandsex.helpers;
 
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -86,6 +89,34 @@ public class Utils {
      */
     public static boolean containsInvalidCharacters(String string){
         return !string.matches("^[A-Za-z0-9 _.-]+$");
+    }
+
+    /**
+     * Gets a user friendly version of a Material
+     * @param material the material to get
+     * @return the friendly version of the material
+     */
+    public static String getFriendlyMaterialName(Material material) {
+        char[] mat = material.name().replace("_", " ").toCharArray();
+        boolean ignore = true;
+        for(int i = 0; i < mat.length; i++) {
+            if(ignore)
+                ignore = false;
+            else if(mat[i] == ' ')
+                ignore = true;
+            else
+                mat[i] = Character.toLowerCase(mat[i]);
+        }
+        return new String(mat);
+    }
+
+    /**
+     * Gets a user friendly version of an Item
+     * @param item the item to get
+     * @return the friendly version of the Item
+     */
+    public static String getFriendlyItemName(ItemStack item) {
+        return getFriendlyMaterialName(item.getType());
     }
 
 }
