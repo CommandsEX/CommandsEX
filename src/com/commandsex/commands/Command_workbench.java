@@ -67,7 +67,7 @@ public class Command_workbench implements Command, EnableJob {
             return true;
         }
         
-        if(args.length == 3) { // Bench by perm
+        if(args.length == 2) { // Bench by perm
             if(!args[0].equalsIgnoreCase("all"))
                 return false;
             
