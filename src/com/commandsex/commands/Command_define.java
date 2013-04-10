@@ -28,7 +28,7 @@ public class Command_define implements Command, EnableJob {
                 return true;
             }
             if(def != null)
-                sender.sendMessage(Language.getTranslationForSender(sender, "definition", args[0], def.getDefinition(), def.getUrl().substring(0, 7) + "www." + def.getUrl().substring(7)));
+                sender.sendMessage(Language.getTranslationForSender(sender, "definition", args[0], def.getDefinition(), def.getUrl()));
             else
                 sender.sendMessage(Language.getTranslationForSender(sender, "definitionNotFound", args[0]));
             return true;
@@ -56,7 +56,7 @@ public class Command_define implements Command, EnableJob {
                     return true;
                 }
                 if(def != null)
-                    sender.sendMessage(Language.getTranslationForSender(sender, "definition", args[0], def.getDefinition(), def.getUrl().substring(0, 7) + "www." + def.getUrl().substring(7)));
+                    sender.sendMessage(Language.getTranslationForSender(sender, "definition", args[0], def.getDefinition(), def.getUrl()));
                 else
                     sender.sendMessage(Language.getTranslationForSender(sender, "definitionNotFound", args[0]));
             }
