@@ -67,9 +67,12 @@ public class Command_heal implements Command, EnableJob{
             return true;
         }
         
-        if(args.length == 2 && Players.hasPermission(sender, byPerm)) { // Heal by perm
+        if(args.length == 2) { // Heal by perm
             if(!args[0].equalsIgnoreCase("all"))
                 return false;
+            
+            if(!Players.hasPermission(sender, byPerm))
+                return true;
             
             int healed = 0;
             for(Player player : Bukkit.getOnlinePlayers()) {

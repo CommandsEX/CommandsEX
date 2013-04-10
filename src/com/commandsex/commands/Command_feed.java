@@ -48,13 +48,13 @@ public class Command_feed implements Command, EnableJob{
             if(args[0].equalsIgnoreCase("all")) {
                 if(!Players.hasPermission(sender, all))
                     return true;
-                int healed = 0;
+                int fed = 0;
                 for(Player player : Bukkit.getOnlinePlayers()) {
                     player.setFoodLevel(20);
                     player.sendMessage(Language.getTranslationForSender(sender, "fedBy", sender.getName()));
-                    healed++;
+                    fed++;
                 }
-                sender.sendMessage(Language.getTranslationForSender(sender, "feedOthers", healed + ""));
+                sender.sendMessage(Language.getTranslationForSender(sender, "feedOthers", fed + ""));
             } else {
                 if(!Players.hasPermission(sender, others))
                     return true;
@@ -68,19 +68,22 @@ public class Command_feed implements Command, EnableJob{
             return true;
         }
         
-        if(args.length == 2 && Players.hasPermission(sender, byPerm)) {
+        if(args.length == 2) {
             if(!args[0].equalsIgnoreCase("all"))
                 return false;
             
-            int healed = 0;
+            if(!Players.hasPermission(sender, byPerm))
+                return true;
+            
+            int fed = 0;
             for(Player player : Bukkit.getOnlinePlayers()) {
                 if(player.hasPermission(args[1])) {
                     player.setFoodLevel(20);
                     player.sendMessage(Language.getTranslationForSender(sender, "fedBy", sender.getName()));
-                    healed++;
+                    fed++;
                 }
             }
-            sender.sendMessage(Language.getTranslationForSender(sender, "feedOthersByPerm", healed + "", args[1]));
+            sender.sendMessage(Language.getTranslationForSender(sender, "feedOthersByPerm", fed + "", args[1]));
         }
         
         return true;
