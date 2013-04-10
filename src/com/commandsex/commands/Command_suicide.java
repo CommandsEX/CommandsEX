@@ -1,15 +1,15 @@
 package com.commandsex.commands;
 
-import com.commandsex.annotations.Builder;
-import com.commandsex.annotations.Cmd;
-import com.commandsex.helpers.Players;
-import com.commandsex.interfaces.Command;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+
+import com.commandsex.annotations.Builder;
+import com.commandsex.annotations.Cmd;
+import com.commandsex.helpers.Players;
+import com.commandsex.interfaces.Command;
 
 @Builder(name = "suicide", type = "COMMAND", description = "Kill yourself!")
 @Cmd(command = "suicide", description = "Kill yourself!", usage = "%c% [player]", aliases = "kill")
