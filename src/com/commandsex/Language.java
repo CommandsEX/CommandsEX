@@ -36,6 +36,9 @@ public class Language implements EnableJob {
      * Run when CommandsEX is enabled
      */
     public void onEnable(PluginManager pluginManager){
+        // create language database if it does not already exist
+        CommandsEX.database.query("CREATE TABLE IF NOT EXISTS %prefix%userlangs (username varchar(50) NOT NULL, lang varchar(5) NOT NULL)" + (CommandsEX.database.getType() == Database.DatabaseType.MYSQL ? " ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='stores per-user selected plugin language'" : ""));
+
         if (!langFolder.exists()){
             langFolder.mkdir();
         }
@@ -173,19 +176,24 @@ public class Language implements EnableJob {
             // Actually load the language now
             String fName = file.getName();
             String languageName = fName.substring(5, fName.length() - 11);
-            Properties language = new Properties();
-            try {
-                FileInputStream fileInputStream = new FileInputStream(file);
 
+            if (languageName.length() <= 5){
+                Properties language = new Properties();
                 try {
-                    language.load(fileInputStream);
-                    langs.put(languageName, language);
-                    LogHelper.logDebug("Loaded language " + languageName);
-                } finally {
-                    fileInputStream.close();
+                    FileInputStream fileInputStream = new FileInputStream(file);
+
+                    try {
+                        language.load(fileInputStream);
+                        langs.put(languageName, language);
+                        LogHelper.logDebug("Loaded language " + languageName);
+                    } finally {
+                        fileInputStream.close();
+                    }
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
                 }
-            } catch (Throwable throwable) {
-                throwable.printStackTrace();
+            } else {
+                LogHelper.logSevere("The language name " + languageName + "is too long\nPlease make sure it is 5 characters or less");
             }
         }
 
@@ -194,12 +202,12 @@ public class Language implements EnableJob {
             ResultSet resultSet = CommandsEX.database.query_res("SELECT * FROM %prefix%userlangs");
 
             while (resultSet.next()){
-                String user = resultSet.getString("user");
+                String user = resultSet.getString("username");
                 String playerLanguage = resultSet.getString("lang");
 
                 if (!langs.containsKey(playerLanguage)){
                     LogHelper.logWarning("Invalid language for player " + user + " the language " + playerLanguage + " cannot be found\nResetting to default");
-                    CommandsEX.database.query("UPDATE %prefix%userlangs SET lang = ? WHERE user = ?", getDefaultLanguage(), user);
+                    CommandsEX.database.query("UPDATE %prefix%userlangs SET lang = ? WHERE username = ?", getDefaultLanguage(), user);
                     userLangs.put(user, getDefaultLanguage());
                 } else {
                     userLangs.put(user, playerLanguage);
@@ -287,18 +295,27 @@ public class Language implements EnableJob {
             userLangs.put(user, language);
 
             Database database = CommandsEX.database;
-            ResultSet resultSet = database.query_res("SELECT user FROM %prefix%userlangs WHERE user = ?", user);
+            ResultSet resultSet = database.query_res("SELECT username FROM %prefix%userlangs WHERE username = ?", user);
 
             if (resultSet.next()){
-                database.query("UPDATE %prefix%userlangs SET lang = ? WHERE user = ?", language, user);
+                database.query("UPDATE %prefix%userlangs SET lang = ? WHERE username = ?", language, user);
             } else {
-                database.query("INSERT INTO %prefix%userlangs VALUES ?, ?", user, language);
+                database.query("INSERT INTO %prefix%userlangs (username, lang) VALUES (?, ?)", user, language);
             }
 
             resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Checks if a language is available
+     * @param language The language to check for availability
+     * @return Is the language available
+     */
+    public static boolean isLanguageAvailable(String language){
+        return langs.containsKey(language);
     }
 
     /**

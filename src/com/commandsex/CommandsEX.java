@@ -80,9 +80,6 @@ public class CommandsEX extends JavaPlugin {
                     return;
             }
 
-            // create language database if it does not already exist
-            database.query("CREATE TABLE IF NOT EXISTS %prefix%userlangs (username varchar(50) NOT NULL, lang varchar(5) NOT NULL)" + (database.getType() == Database.DatabaseType.MYSQL ? " ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='stores per-user selected plugin language'" : ""));
-
             LogHelper.logInfo("Successfully connected to the CommandsEX database");
         } catch (Exception e){
             e.printStackTrace();
