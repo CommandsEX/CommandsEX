@@ -2,7 +2,6 @@ lastVersion: 1.0
 debug: false
 metricsEnabled: true
 defaultLanguage: en-gb
-availableLanguages: [en-gb]
 commandCooldownSeconds: 5
 database:
   type: sqlite

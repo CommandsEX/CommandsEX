@@ -64,10 +64,16 @@ public class Utils {
             Object object = array[i];
 
             if (i != array.length - 1){
-                if (i != 0) stringBuilder.append(glueString);
+                if (i != 0){
+                    stringBuilder.append(glueString);
+                }
+
                 stringBuilder.append(object);
             } else {
-                stringBuilder.append(lastGlueString);
+                if (i != 0){
+                    stringBuilder.append(lastGlueString);
+                }
+
                 stringBuilder.append(object);
             }
         }

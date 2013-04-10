@@ -5,6 +5,7 @@ import java.net.URL;
 import java.security.CodeSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -12,6 +13,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import com.commandsex.interfaces.EnableJob;
+import com.google.common.io.ByteStreams;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -34,49 +36,50 @@ public class Language implements EnableJob {
      * Run when CommandsEX is enabled
      */
     public void onEnable(PluginManager pluginManager){
+        // create language database if it does not already exist
+        CommandsEX.database.query("CREATE TABLE IF NOT EXISTS %prefix%userlangs (username varchar(50) NOT NULL, lang varchar(5) NOT NULL)" + (CommandsEX.database.getType() == Database.DatabaseType.MYSQL ? " ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='stores per-user selected plugin language'" : ""));
+
         if (!langFolder.exists()){
             langFolder.mkdir();
         }
 
-        // Copy languages from JAR
-        CodeSource codeSource = getClass().getProtectionDomain().getCodeSource();
-        if (codeSource != null){
-            URL jar = codeSource.getLocation();
+        CodeSource src = getClass().getProtectionDomain().getCodeSource();
+        if (src != null){
+            URL jar = src.getLocation();
             try {
                 ZipInputStream zipInputStream = new ZipInputStream(jar.openStream());
 
                 try {
-                    byte[] buffer = new byte[1024];
-                    ZipEntry zipEntry;
-                    while ((zipEntry = zipInputStream.getNextEntry()) != null){
-                        String name = zipEntry.getName();
+                    ZipEntry ze = null;
 
-                       if (name.startsWith("lang") && name.endsWith(".properties")){
-                           try {
-                               File langFile = new File(langFolder, name.replaceFirst("lang/", ""));
+                    while ((ze = zipInputStream.getNextEntry()) != null){
+                        String name = ze.getName();
 
-                               // if lastVersion isn't equal to this one, reset lang files
-                               if (CommandsEX.config.getString("lastVersion") != CommandsEX.plugin.getDescription().getVersion()){
-                                   langFile.renameTo(new File(langFolder, langFile.getName() + ".cexbackup"));
-                               }
+                        try {
+                            if (name.startsWith("lang/lang_") && name.endsWith(".properties")){
+                                File file = new File(CommandsEX.plugin.getDataFolder(), "langs" + name.replaceFirst("lang", ""));
 
-                               if (!langFile.exists()){
-                                   langFile.createNewFile();
-                                   FileOutputStream fileOutputStream = new FileOutputStream(langFile);
+                                if (!file.exists()){
+                                    InputStream inputStream = getClass().getResourceAsStream("/" + name);
 
-                                   try {
-                                       int len;
-                                       while ((len = zipInputStream.read(buffer)) > 0){
-                                           fileOutputStream.write(buffer, 0, len);
-                                       }
-                                   } finally {
-                                       fileOutputStream.close();
-                                   }
-                               }
-                           } finally {
-                               zipInputStream.closeEntry();
-                           }
-                       }
+                                    try {
+                                        if (inputStream != null){
+                                            FileOutputStream fileOutputStream = new FileOutputStream(file);
+
+                                            try {
+                                                ByteStreams.copy(inputStream, fileOutputStream);
+                                            } finally {
+                                                fileOutputStream.close();
+                                            }
+                                        }
+                                    } finally {
+                                        inputStream.close();
+                                    }
+                                }
+                            }
+                        } finally {
+                            zipInputStream.closeEntry();
+                        }
                     }
                 } finally {
                     zipInputStream.close();
@@ -86,45 +89,129 @@ public class Language implements EnableJob {
             }
         }
 
-        // Load available languages
-        for (String s : config.getStringList("availableLanguages")){
-            if (s.length() > 5){
-                LogHelper.logWarning("Language " + s + " is too long, this language file will not be available");
-                continue;
+        File[] files = langFolder.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                String fileName = pathname.getName();
+                return !pathname.isDirectory() && fileName.startsWith("lang_") && fileName.endsWith(".properties");
             }
+        });
 
-            Properties lang = new Properties();
-            String langFileName = "lang_" + s + ".properties";
-            File langFile = new File(langFolder, langFileName);
-            if (!langFile.exists()){
-                LogHelper.logWarning("Couldn't find language file for language " + s);
-                continue;
+        // Iterate through all files, first if the last version is lower than the current version, all language files will be overwtitten if they are contained in the JAR
+        // Secondly it will check all current language files and if one of them is missing a varibale, it will copy it in
+        // Lastly it will load the language file
+        for (File file : files){
+            if (CommandsEX.config.getDouble("lastVersion") < Double.parseDouble(CommandsEX.plugin.getDescription().getVersion())){
+                InputStream inputStream = getClass().getResourceAsStream("/lang/" + file.getName());
+
+                if (inputStream != null){
+                    try {
+                        File newFile = new File(file.getParentFile(), file.getName() + ".cex-upgrade-backup");
+                        LogHelper.logWarning(file.getPath() + " has been overwritten due to a CommandsEX update\nBackup saved to " + newFile.getPath());
+                        file.renameTo(newFile);
+
+                        try {
+                            FileOutputStream fileOutputStream = new FileOutputStream(file);
+
+                            try {
+                                ByteStreams.copy(inputStream, fileOutputStream);
+                            } finally {
+                                fileOutputStream.close();
+                            }
+                        } catch (Throwable throwable) {
+                            throwable.printStackTrace();
+                        }
+                    } finally {
+                        try {
+                            inputStream.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             } else {
+                Properties properties = new Properties();
                 try {
-                    lang.load(new FileInputStream(langFile));
-                } catch (FileNotFoundException e) {
-                    // This should never be thrown as we check above whether the file exists
-                    e.printStackTrace();
-                    continue;
+                    FileInputStream fileInputStream = new FileInputStream(file);
+
+                    if (fileInputStream != null){
+                        properties.load(fileInputStream);
+                        boolean propertiesChanged = false;
+
+                        try {
+                            InputStream inputStream = getClass().getResourceAsStream("/lang/" + file.getName());
+
+                            if (inputStream != null){
+                                Properties jarProperties = new Properties();
+                                jarProperties.load(inputStream);
+
+                                for (Object o : jarProperties.keySet()){
+                                    if (!properties.containsKey(o)){
+                                        propertiesChanged = true;
+                                        properties.put(o, jarProperties.get(o));
+                                    }
+                                }
+                            }
+                        } finally {
+                            fileInputStream.close();
+                        }
+
+                        // Only save if properties if it has actually been changed
+                        if (propertiesChanged){
+                            System.out.print("6");
+                            LogHelper.logInfo(file.getPath() + " had missing language entries, adding defaults");
+                            FileOutputStream fileOutputStream = new FileOutputStream(file);
+                            try {
+                                properties.store(fileOutputStream, " For a cleaner copy, copy the file from the lang folder in the CommandsEX JAR");
+                            } finally {
+                                fileOutputStream.close();
+                            }
+                        }
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
-                    LogHelper.logSevere("IO error when reading language file for language " + s);
-                    continue;
                 }
             }
 
-            langs.put(s, lang);
-            LogHelper.logDebug("Successfully loaded language " + s);
+            // Actually load the language now
+            String fName = file.getName();
+            String languageName = fName.substring(5, fName.length() - 11);
+
+            if (languageName.length() <= 5){
+                Properties language = new Properties();
+                try {
+                    FileInputStream fileInputStream = new FileInputStream(file);
+
+                    try {
+                        language.load(fileInputStream);
+                        langs.put(languageName, language);
+                        LogHelper.logDebug("Loaded language " + languageName);
+                    } finally {
+                        fileInputStream.close();
+                    }
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+            } else {
+                LogHelper.logSevere("The language name " + languageName + "is too long\nPlease make sure it is 5 characters or less");
+            }
         }
 
-        // load player languages into HashMap
+        // Load player languages into HashMap
         try {
             ResultSet resultSet = CommandsEX.database.query_res("SELECT * FROM %prefix%userlangs");
 
             while (resultSet.next()){
-                String user = resultSet.getString("user");
-                String language = resultSet.getString("lang");
-                userLangs.put(user, language);
+                String user = resultSet.getString("username");
+                String playerLanguage = resultSet.getString("lang");
+
+                if (!langs.containsKey(playerLanguage)){
+                    LogHelper.logWarning("Invalid language for player " + user + " the language " + playerLanguage + " cannot be found\nResetting to default");
+                    CommandsEX.database.query("UPDATE %prefix%userlangs SET lang = ? WHERE username = ?", getDefaultLanguage(), user);
+                    userLangs.put(user, getDefaultLanguage());
+                } else {
+                    userLangs.put(user, playerLanguage);
+                }
             }
 
             resultSet.close();
@@ -208,12 +295,12 @@ public class Language implements EnableJob {
             userLangs.put(user, language);
 
             Database database = CommandsEX.database;
-            ResultSet resultSet = database.query_res("SELECT user FROM %prefix%userlangs WHERE user = ?", user);
+            ResultSet resultSet = database.query_res("SELECT username FROM %prefix%userlangs WHERE username = ?", user);
 
             if (resultSet.next()){
-                database.query("UPDATE %prefix%userlangs SET lang = ? WHERE user = ?", language, user);
+                database.query("UPDATE %prefix%userlangs SET lang = ? WHERE username = ?", language, user);
             } else {
-                database.query("INSERT INTO %prefix%userlangs VALUES ?, ?", user, language);
+                database.query("INSERT INTO %prefix%userlangs (username, lang) VALUES (?, ?)", user, language);
             }
 
             resultSet.close();
@@ -223,11 +310,22 @@ public class Language implements EnableJob {
     }
 
     /**
+     * Checks if a language is available
+     * @param language The language to check for availability
+     * @return Is the language available
+     */
+    public static boolean isLanguageAvailable(String language){
+        return langs.containsKey(language);
+    }
+
+    /**
      * Gets all available languages on the server
      * @return A list of all available languages
      */
     public static List<String> getAvailableLanguages(){
-        return config.getStringList("availableLanguages");
+        List<String> list = new ArrayList<>();
+        list.addAll(langs.keySet());
+        return list;
     }
 
 }
