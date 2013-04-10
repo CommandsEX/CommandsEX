@@ -1,12 +1,7 @@
 package com.commandsex;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -142,17 +137,17 @@ public class Database {
     /**
      * Executes a query on the database that does not return a ResultSet
      * If %prefix% is used in the query, it will be replaced with the query
-     * 
+     *
      * @param query The query to execute
      * @param params Additional parameters needed
      * @return Did the query execute successfully?
      */
     public boolean query(String query, Object... params){
-        if (!connected){
+        if (!isConnected()){
             LogHelper.logSevere("Could not run query because database is not connected QUERY = " + query);
             return false;
         }
-        
+
         query = query.replaceAll("%prefix%", getPrefix());
 
         if (params.length == 0){
@@ -173,9 +168,8 @@ public class Database {
 
             try {
                 PreparedStatement prep = conn.prepareStatement(query);
-                for (int i = 0; i < params.length; i++) {
-                    Object o = params[i];
-
+                int i = 1;
+                for (Object o : params) {
                     if (o instanceof Integer) {
                         prep.setInt(i, (Integer)o);
                     } else if (o instanceof String) {
@@ -204,6 +198,8 @@ public class Database {
                         prep.close();
                         return false;
                     }
+
+                    i++;
                 }
 
                 prep.addBatch();
@@ -224,18 +220,18 @@ public class Database {
     /**
      * Executes a query and returns a ResultSet
      * If %prefix% is used in the query, it will be replaced with the query
-     * 
+     *
      * @param query The query to execute
      * @param params Additional parameters needed
      * @return The ResultSet, null if failed
      */
     public ResultSet query_res(String query, Object... params){
-        if (!connected){
+        if (!isConnected()){
             LogHelper.logSevere("Could not run query because database is not connected");
             LogHelper.logSevere(query);
             return null;
         }
-        
+
         query = query.replaceAll("%prefix%", prefix);
 
         if (params.length == 0){
@@ -255,9 +251,8 @@ public class Database {
 
             try {
                 PreparedStatement prep = conn.prepareStatement(query);
-                for (int i = 0; i < params.length; i++) {
-                    Object o = params[i];
-
+                int i = 1;
+                for (Object o : params) {
                     if (o instanceof Integer) {
                         prep.setInt(i, (Integer)o);
                     } else if (o instanceof String) {
@@ -267,7 +262,7 @@ public class Database {
                     } else if (o instanceof Float) {
                         prep.setFloat(i, (Float)o);
                     } else if (o instanceof Long) {
-                        prep.setLong(i, (Long)o);
+                        prep.setLong(i, (Long) o);
                     } else if (o == null) {
                         prep.setNull(i, 0);
                     } else {
@@ -275,31 +270,35 @@ public class Database {
                         LogHelper.logSevere(query);
                         LogHelper.logSevere("Unhandled variable when writing to database");
                         LogHelper.logSevere(o.toString());
-                        
+
                         prep.close();
                         return null;
                     }
+
+                    i++;
                 }
-                
+
                 return prep.executeQuery();
-            } catch (Exception e){
-                e.printStackTrace();
+            } catch (Throwable throwable){
+                throwable.printStackTrace();
                 LogHelper.logSevere("Error while writing to the database " + databaseName + " QUERY = " + query);
                 return null;
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Closes the database connection if it is connected
      */
     public void close(){
-        if (connected){
+        if (isConnected()){
             try {
                 conn.close();
-            } catch (Exception e){}
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
