@@ -64,7 +64,7 @@ public class Command_burn implements Command, EnableJob{
                     player.sendMessage(Language.getTranslationForSender(sender, "burntBy", sender.getName()));
                     burnt++;
                 }
-                sender.sendMessage(Language.getTranslationForSender(sender, "burnOthers", burnt + ""));
+                sender.sendMessage(Language.getTranslationForSender(sender, "burnOthers", String.valueOf(burnt)));
             } else {
                 if(!Players.hasPermission(sender, others))
                     return true;
@@ -93,7 +93,7 @@ public class Command_burn implements Command, EnableJob{
                     burnt++;
                 }
             }
-            sender.sendMessage(Language.getTranslationForSender(sender, "burnOthersByPerm", burnt + "", args[1]));
+            sender.sendMessage(Language.getTranslationForSender(sender, "burnOthersByPerm", String.valueOf(burnt), args[1]));
         }
         
         return true;

@@ -66,7 +66,7 @@ public class Command_blind implements Command, EnableJob{
                     player.sendMessage(Language.getTranslationForSender(sender, "blindedBy", sender.getName()));
                     blinded++;
                 }
-                sender.sendMessage(Language.getTranslationForSender(sender, "blindOthers", blinded + ""));
+                sender.sendMessage(Language.getTranslationForSender(sender, "blindOthers", String.valueOf(blinded)));
             } else {
                 if(!Players.hasPermission(sender, others))
                     return true;
@@ -95,7 +95,7 @@ public class Command_blind implements Command, EnableJob{
                     blinded++;
                 }
             }
-            sender.sendMessage(Language.getTranslationForSender(sender, "blindOthersByPerm", blinded + "", args[1]));
+            sender.sendMessage(Language.getTranslationForSender(sender, "blindOthersByPerm", String.valueOf(blinded), args[1]));
         }
         
         return true;

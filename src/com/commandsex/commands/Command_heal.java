@@ -53,7 +53,7 @@ public class Command_heal implements Command, EnableJob{
                     player.sendMessage(Language.getTranslationForSender(sender, "healedBy", sender.getName()));
                     healed++;
                 }
-                sender.sendMessage(Language.getTranslationForSender(sender, "healOthers", healed + ""));
+                sender.sendMessage(Language.getTranslationForSender(sender, "healOthers", String.valueOf(healed)));
             } else {
                 if(!Players.hasPermission(sender, others))
                     return true;
@@ -82,7 +82,7 @@ public class Command_heal implements Command, EnableJob{
                     healed++;
                 }
             }
-            sender.sendMessage(Language.getTranslationForSender(sender, "healOthersByPerm", healed + "", args[1]));
+            sender.sendMessage(Language.getTranslationForSender(sender, "healOthersByPerm", String.valueOf(healed), args[1]));
         }
         
         return true;

@@ -54,7 +54,7 @@ public class Command_feed implements Command, EnableJob{
                     player.sendMessage(Language.getTranslationForSender(sender, "fedBy", sender.getName()));
                     fed++;
                 }
-                sender.sendMessage(Language.getTranslationForSender(sender, "feedOthers", fed + ""));
+                sender.sendMessage(Language.getTranslationForSender(sender, "feedOthers", String.valueOf(fed)));
             } else {
                 if(!Players.hasPermission(sender, others))
                     return true;
@@ -83,7 +83,7 @@ public class Command_feed implements Command, EnableJob{
                     fed++;
                 }
             }
-            sender.sendMessage(Language.getTranslationForSender(sender, "feedOthersByPerm", fed + "", args[1]));
+            sender.sendMessage(Language.getTranslationForSender(sender, "feedOthersByPerm", String.valueOf(fed), args[1]));
         }
         
         return true;
