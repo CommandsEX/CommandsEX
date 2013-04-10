@@ -54,5 +54,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.mcstats:metrics:R6"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.bukkit:bukkit:1.4.5-R0.3-SNAPSHOT"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: org.bukkit:craftbukkit:1.5.1-R0.2-SNAPSHOT"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Maven: com.restfb:restfb:1.6.12"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
