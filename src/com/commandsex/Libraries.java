@@ -70,7 +70,7 @@ public class Libraries {
                 return LoadingResult.LIBRARY_DOWNLOAD_ERROR;
             }
         
-        if(ClasspathHacker.addFileGetResult(downloadedLib)) {
+        if(ClasspathHacker.addFile(downloadedLib)) {
             LogHelper.logDebug(Language.getTranslationForSender(Bukkit.getConsoleSender(), "libraryLoaded"));
             libraries.add(name.toUpperCase());
             return LoadingResult.LIBRARY_SUCCESSFULLY_LOADED;
@@ -107,7 +107,7 @@ public class Libraries {
      * @return the file
      */
     public static File getLibFolder() {
-        return new File(CommandsEX.plugin.getDataFolder().getAbsolutePath() + File.separator + "libs/");
+        return new File(CommandsEX.plugin.getDataFolder(), "libs/");
     }
 
 }

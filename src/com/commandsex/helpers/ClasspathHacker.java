@@ -3,6 +3,7 @@ package com.commandsex.helpers;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -19,27 +20,32 @@ public class ClasspathHacker {
     /**
      * Adds a file to the System ClassLoader
      * @param file The file to add to the ClassLoader
-     * @throws IOException
+     * @return Was the the file successfully added to the system class-loader
      */
-    public static void addFile(String file) throws IOException {
-        addFile(new File(file));
+    public static boolean addFile(String file) {
+        return addFile(new File(file));
     }
 
     /**
      * Adds a file to the System ClassLoader
      * @param file The file to add to the ClassLoader
-     * @throws IOException
+     * @return Was the the file successfully added to the system class-loader
      */
-    public static void addFile(File file) throws IOException {
-        addURL(file.toURI().toURL());
+    public static boolean addFile(File file) {
+        try {
+            return addURL(file.toURI().toURL());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
      * Adds a URL to the System ClassLoader
      * @param url The URL to add to the ClassLoader
-     * @throws IOException
+     * @return Was the the url successfully added to the system class-loader
      */
-    public static void addURL(URL url) throws IOException {
+    public static boolean addURL(URL url) {
         URLClassLoader systemClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
         Class<?> systemClassLoaderClass = URLClassLoader.class;
 
@@ -47,30 +53,11 @@ public class ClasspathHacker {
             Method method = systemClassLoaderClass.getDeclaredMethod("addURL", parameters);
             method.setAccessible(true);
             method.invoke(systemClassLoader, new Object[]{ url });
+            return true;
         } catch (Throwable throwable){
             throwable.printStackTrace();
-            throw new IOException("Couldn't add URL " + url.toString() + " to the System Classloader");
-        }
-    }
-    
-    /**
-     * Adds a file to the System ClassLoader without throwing any exceptions
-     * @param file The file to add to the ClassLoader
-     * @returns <code>true</code> if the file was added successfully
-     */
-    public static boolean addFileGetResult(File file) {
-        try {
-            URL url = file.toURI().toURL();
-            URLClassLoader systemClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-            Class<?> systemClassLoaderClass = URLClassLoader.class;
-            Method method = systemClassLoaderClass.getDeclaredMethod("addURL", parameters);
-            method.setAccessible(true);
-            method.invoke(systemClassLoader, new Object[]{ url });
-        } catch (Throwable throwable){
+            LogHelper.logSevere("Couldn't add URL " + url.toString() + " to the System Classloader");
             return false;
         }
-        
-        return true;
     }
-
 }
