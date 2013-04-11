@@ -40,20 +40,47 @@
               <include>org.mcstats:metrics</include>
               <include>org.reflections:reflections</include>
               <include>javassist:javassist</include>
+              <include>org.jooq:jooq</include>
+              <include>com.h2database:h2</include>
+              <include>mysql:mysql-connector-java</include>
             </includes>
           </artifactSet>
           <relocations>
             <relocation>
               <pattern>org.reflections</pattern>
-              <shadedPattern>com.commandsex.libs.org.reflections</shadedPattern>
+              <shadedPattern>com.commandsex.libs.reflections</shadedPattern>
             </relocation>
             <relocation>
               <pattern>org.mcstats</pattern>
-              <shadedPattern>com.commandsex.libs.org.mcstats</shadedPattern>
+              <shadedPattern>com.commandsex.libs.mcstats</shadedPattern>
             </relocation>
             <relocation>
               <pattern>javassist</pattern>
               <shadedPattern>com.commandsex.libs.javassist</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>org.jooq</pattern>
+              <shadedPattern>com.commandsex.libs.jooq</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>xjb</pattern>
+              <shadedPattern>com.commandsex.libs.jooq</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>xsd</pattern>
+              <shadedPattern>com.commandsex.libs.jooq</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>org.h2</pattern>
+              <shadedPattern>com.commandsex.libs.h2</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>com.mysql</pattern>
+              <shadedPattern>com.commandsex.libs.mysql</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>org.gjt.mm</pattern>
+              <shadedPattern>com.commandsex.libs.mm</shadedPattern>
             </relocation>
           </relocations>
         </configuration>

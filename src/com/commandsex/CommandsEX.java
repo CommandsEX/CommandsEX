@@ -1,5 +1,9 @@
 package com.commandsex;
 
+import com.commandsex.database.Database;
+import com.commandsex.database.H2Database;
+import com.commandsex.database.MySqlDatabase;
+import com.commandsex.database.SqLiteDatabase;
 import com.commandsex.interfaces.DisableJob;
 import com.commandsex.interfaces.EnableJob;
 import org.bukkit.craftbukkit.v1_5_R2.CraftServer;
@@ -63,21 +67,26 @@ public class CommandsEX extends JavaPlugin {
 
         try {
             LogHelper.logInfo("Connecting to CommandsEX database...");
-            Database.DatabaseType databaseType = Database.DatabaseType.fromString(config.getString("database.type"));
 
-            switch (databaseType){
-                case SQLITE :
-                    database = new Database(config.getString("database.name"), config.getString("database.prefix"));
-                    break;
-                case MYSQL :
-                    database = new Database(config.getString("database.name"), config.getString("database.username"),
-                            config.getString("database.password"), config.getString("database.host"),
-                            config.getString("database.port"), config.getString("database.prefix"));
-                    break;
+            switch (config.getString("database.type")){
                 default :
-                    LogHelper.logSevere("Invalid database type - check your config, disabling plugin...");
+                    LogHelper.logSevere("Invalid database type in config, disabling...");
                     pluginManager.disablePlugin(this);
-                    return;
+                    break;
+                case ("mysql") :
+                    database = new MySqlDatabase(config.getString("database.name"),
+                            config.getString("database.username"), config.getString("database.password"),
+                            config.getString("database.host"), config.getString("database.port"),
+                            config.getString("database.prefix"));
+                            break;
+                case ("sqlite") :
+                    database = new SqLiteDatabase(new File(getDataFolder(), config.getString("database.name") + ".db").getAbsolutePath(),
+                            config.getString("database.prefix"));
+                    break;
+                case ("h2") :
+                    database = new H2Database(new File(getDataFolder(), config.getString("database.name") + ".db").getAbsolutePath(),
+                            config.getString("database.prefix"));
+                    break;
             }
 
             LogHelper.logInfo("Successfully connected to the CommandsEX database");
@@ -204,7 +213,7 @@ public class CommandsEX extends JavaPlugin {
 
     public void onDisable(){
         Jobs.executeDisableJobs();
-        database.close();
+        //database.close();
     }
 
     public void reload(){

@@ -12,6 +12,8 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import com.commandsex.database.Database;
+import com.commandsex.database.MySqlDatabase;
 import com.commandsex.interfaces.EnableJob;
 import com.google.common.io.ByteStreams;
 import org.bukkit.ChatColor;
@@ -21,6 +23,10 @@ import org.bukkit.entity.Player;
 
 import com.commandsex.helpers.LogHelper;
 import org.bukkit.plugin.PluginManager;
+import org.jooq.Record;
+import org.jooq.Result;
+import org.jooq.Table;
+import static org.jooq.impl.Factory.*;
 
 /**
  * All helper methods to do with languages and translations
@@ -30,14 +36,16 @@ public class Language implements EnableJob {
     private static HashMap<String, Properties> langs = new HashMap<>();
     private static HashMap<String, String> userLangs = new HashMap<>();
     private static FileConfiguration config = CommandsEX.config;
+    private  static Database database = CommandsEX.database;
     public static File langFolder = new File(CommandsEX.plugin.getDataFolder(), "langs");
 
     /**
      * Run when CommandsEX is enabled
      */
     public void onEnable(PluginManager pluginManager){
+        database = CommandsEX.database;
         // create language database if it does not already exist
-        CommandsEX.database.query("CREATE TABLE IF NOT EXISTS %prefix%userlangs (username varchar(50) NOT NULL, lang varchar(5) NOT NULL)" + (CommandsEX.database.getType() == Database.DatabaseType.MYSQL ? " ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='stores per-user selected plugin language'" : ""));
+        database.getExecutor().execute("CREATE TABLE IF NOT EXISTS " + database.getPrefix() + "userlangs (username varchar(50) NOT NULL, lang varchar(5) NOT NULL)" + (CommandsEX.database instanceof MySqlDatabase ? " ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='stores per-user selected plugin language'" : ""));
 
         if (!langFolder.exists()){
             langFolder.mkdir();
@@ -198,25 +206,19 @@ public class Language implements EnableJob {
         }
 
         // Load player languages into HashMap
-        try {
-            ResultSet resultSet = CommandsEX.database.query_res("SELECT * FROM %prefix%userlangs");
+        Result<Record> result = database.getExecutor().select().from(database.getPrefix() + "userlangs").fetch();
 
-            while (resultSet.next()){
-                String user = resultSet.getString("username");
-                String playerLanguage = resultSet.getString("lang");
+        for (Record record : result){
+            String username = record.getValue("username").toString();
+            String language = record.getValue("lang").toString();
 
-                if (!langs.containsKey(playerLanguage)){
-                    LogHelper.logWarning("Invalid language for player " + user + " the language " + playerLanguage + " cannot be found\nResetting to default");
-                    CommandsEX.database.query("UPDATE %prefix%userlangs SET lang = ? WHERE username = ?", getDefaultLanguage(), user);
-                    userLangs.put(user, getDefaultLanguage());
-                } else {
-                    userLangs.put(user, playerLanguage);
-                }
+            if (!langs.containsKey(language)){
+                LogHelper.logWarning("Invalid language for player " + username + " the language " + language + " cannot be found\nResetting to default");
+                database.getExecutor().update(tableByName("userlangs")).set(field("lang"), value(getDefaultLanguage())).where("user", username);
+                userLangs.put(username, getDefaultLanguage());
+            } else {
+                userLangs.put(username, language);
             }
-
-            resultSet.close();
-        } catch (SQLException e){
-            e.printStackTrace();
         }
     }
 
@@ -291,21 +293,15 @@ public class Language implements EnableJob {
      * @param language The language to set the users language to
      */
     public static void setUserLanguage(String user, String language){
-        try {
-            userLangs.put(user, language);
+        userLangs.put(user, language);
 
-            Database database = CommandsEX.database;
-            ResultSet resultSet = database.query_res("SELECT username FROM %prefix%userlangs WHERE username = ?", user);
+        Result<Record> resultQuery = database.getExecutor().select().from(database.getPrefix() + "userlangs").where("username", user).fetch();
 
-            if (resultSet.next()){
-                database.query("UPDATE %prefix%userlangs SET lang = ? WHERE username = ?", language, user);
-            } else {
-                database.query("INSERT INTO %prefix%userlangs (username, lang) VALUES (?, ?)", user, language);
-            }
-
-            resultSet.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Table<Record> table = tableByName(database.getPrefix() + "userlangs");
+        if (resultQuery.isNotEmpty()){
+            database.getExecutor().update(table).set(field("username"), value(language)).where("username", user);
+        } else {
+            database.getExecutor().insertInto(table, field("username"), field("lang")).values(user, language).execute();
         }
     }
 
