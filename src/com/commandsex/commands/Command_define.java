@@ -12,6 +12,10 @@ import org.bukkit.plugin.PluginManager;
 
 import java.io.IOException;
 
+/**
+ * Define, gets the definition of words
+ * @author Kezz101
+ */
 @Builder(name = "define", description = "Lookup the definition of any word", type = "COMMAND")
 @Cmd(command = "define", description = "Lookup the definition of any word", usage = "%c% <word> [dictionary id]")
 public class Command_define implements Command, EnableJob {

@@ -1,7 +1,5 @@
 package com.commandsex.interfaces;
 
-import com.commandsex.CommandsEX;
-
 /**
  * Interface for functions that require code run when the plugin is disabled
  */

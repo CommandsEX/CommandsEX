@@ -18,7 +18,7 @@ import com.commandsex.interfaces.EnableJob;
 
 /**
  * Hat, puts a block on your head
- * @author kezz101
+ * @author Kezz101
  */
 @Builder(name="hat", description="Puts a block on your head!", type="COMMAND")
 @Cmd(command = "hat", description = "Puts a block on your head!", aliases = "head", usage = "%c% [item id] [players]")

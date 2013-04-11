@@ -1,8 +1,6 @@
 package com.commandsex.interfaces;
 
-import com.commandsex.CommandsEX;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 
 public interface Command {
 
