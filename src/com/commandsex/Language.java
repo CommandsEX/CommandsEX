@@ -1,10 +1,17 @@
 package com.commandsex;
 
-import java.io.*;
+import static org.jooq.impl.Factory.field;
+import static org.jooq.impl.Factory.tableByName;
+import static org.jooq.impl.Factory.value;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.security.CodeSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,21 +19,20 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import com.commandsex.database.Database;
-import com.commandsex.database.MySqlDatabase;
-import com.commandsex.interfaces.EnableJob;
-import com.google.common.io.ByteStreams;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-
-import com.commandsex.helpers.LogHelper;
 import org.bukkit.plugin.PluginManager;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.Table;
-import static org.jooq.impl.Factory.*;
+
+import com.commandsex.database.Database;
+import com.commandsex.database.MySqlDatabase;
+import com.commandsex.helpers.LogHelper;
+import com.commandsex.interfaces.EnableJob;
+import com.google.common.io.ByteStreams;
 
 /**
  * All helper methods to do with languages and translations
