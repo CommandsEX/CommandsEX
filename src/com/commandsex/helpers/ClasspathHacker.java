@@ -52,5 +52,25 @@ public class ClasspathHacker {
             throw new IOException("Couldn't add URL " + url.toString() + " to the System Classloader");
         }
     }
+    
+    /**
+     * Adds a file to the System ClassLoader without throwing any exceptions
+     * @param file The file to add to the ClassLoader
+     * @returns <code>true</code> if the file was added successfully
+     */
+    public static boolean addFileGetResult(File file) {
+        try {
+            URL url = file.toURI().toURL();
+            URLClassLoader systemClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+            Class<?> systemClassLoaderClass = URLClassLoader.class;
+            Method method = systemClassLoaderClass.getDeclaredMethod("addURL", parameters);
+            method.setAccessible(true);
+            method.invoke(systemClassLoader, new Object[]{ url });
+        } catch (Throwable throwable){
+            return false;
+        }
+        
+        return true;
+    }
 
 }
