@@ -1,15 +1,16 @@
 package com.commandsex.helpers.plugman;
 
+import java.io.IOException;
 import java.util.Map;
 
 public class BukgetPluginList {
 
-    private BukgetPluginList() {
+    private BukgetPluginList(Map<Integer, String> plugins) {
 
     }
 
-    public static BukgetPluginList getListFromQuery(String searchTerm, Category category) {
-        return new BukgetPluginList();
+    public static BukgetPluginList getListFromQuery(String searchTerm, Category category) throws IOException {
+        return new BukgetPluginList(null);
     }
 
     public Map<Integer, String> getPlugins() {

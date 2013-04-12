@@ -1,15 +1,22 @@
 package com.commandsex.helpers.plugman;
 
+import java.io.IOException;
 import java.net.URL;
 
 public class BukgetPlugin {
 
-    private BukgetPlugin() {
+    private BukgetPlugin() {}
 
+    public static BukgetPlugin getPluginFromList(BukgetPluginList list, String name) throws IOException {
+        return new BukgetPlugin();
     }
 
-    public static BukgetPlugin getPluginFromList(BukgetPluginList list, String name) {
-        return new BukgetPlugin();
+    public static BukgetPlugin getPluginBySlug(String slug) throws IOException {
+         return null;
+    }
+
+    public static URL getDownloadLinkFromSlug(String slug) throws IOException {
+        return null;
     }
 
     public URL download() {
@@ -37,6 +44,10 @@ public class BukgetPlugin {
     }
 
     public String description() {
+        return null;
+    }
+
+    public String changelog() {
         return null;
     }
 
