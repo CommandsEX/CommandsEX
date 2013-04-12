@@ -1,6 +1,8 @@
 package com.commandsex.helpers;
 
 import com.commandsex.CommandsEX;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonObject;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonParser;
@@ -10,6 +12,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
 
 public class WebHelper {
 
@@ -139,6 +142,22 @@ public class WebHelper {
                 return new Dictionary.Definition(obj.get("AbstractText").getAsString(), shortenURL("http://www.thefreedictionary.com/" + word));
         }
         return null;
+    }
+
+    /**
+     * Joins the elements in a {@link JsonArray} with a specified string in between
+     * @param array the array
+     * @param glueString the glue string
+     * @return the joined String
+     */
+    public static String joinJsonArray(JsonArray array, String glueString) {
+        Iterator<JsonElement> it = array.iterator();
+        StringBuilder builder = new StringBuilder();
+        while(it.hasNext()) {
+            builder.append(it.next().getAsString() + glueString);
+            it.remove();
+        }
+        return builder.toString().replaceAll(glueString + "$", "");
     }
 
 }
