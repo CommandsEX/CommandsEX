@@ -93,7 +93,7 @@ public class BukgetPlugin {
                     values.put(field, versions.get("link").getAsString().replace("\\", ""));
                     break;
                 case DOWNLOAD_LINK:
-                    values.put(field, versions.get("downloads").getAsString().replace("\\", ""));
+                    values.put(field, versions.get("download").getAsString().replace("\\", ""));
                     break;
                 case BUKKIT_VERSION:
                     values.put(field, WebHelper.joinJsonArray(versions.getAsJsonArray("game_versions"), ", "));
