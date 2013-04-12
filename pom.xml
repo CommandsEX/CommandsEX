@@ -81,6 +81,11 @@
             <artifactId>jooq</artifactId>
             <version>3.0.0-RC2</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.2</version>
+        </dependency>
 	</dependencies>
     <reporting>
         <plugins>
