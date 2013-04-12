@@ -1,13 +1,18 @@
 package com.commandsex.helpers;
 
+import com.commandsex.Language;
 import org.apache.commons.lang.WordUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.InputStream;
+import java.io.*;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Utils {
 
@@ -129,6 +134,39 @@ public class Utils {
         } catch (java.util.NoSuchElementException e) {
             return "";
         }
+    }
+
+    /**
+     * Downloads a file while also displaying the progress in the console
+     * @param download The download of the saveLocation to download
+     * @param saveLocation The location to save the file to
+     * @return Did the download download successfully
+     */
+    public static boolean downloadWithProgress(URL download, File saveLocation){
+        final Download downloadInstance = new Download(download, saveLocation);
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (downloadInstance.getStatus() == Download.Status.DOWNLOADING){
+                    LogHelper.logInfo(Language.getTranslationForSender(Bukkit.getConsoleSender(), "libraryDownloadingProgress", downloadInstance.getDownloadedSize(), downloadInstance.getProgress(), downloadInstance.getTotalSize()));
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return downloadInstance.getStatus() != Download.Status.FAILED;
     }
 
 }
