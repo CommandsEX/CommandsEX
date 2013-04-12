@@ -36,6 +36,22 @@ public class BukgetPlugin {
      */
 
     /**
+     * Gets the information for a plugin by it's BukkitDev url
+     * @param url the plugin's BukkitDev url
+     * @param version the {@link Bukget.Version} of download files you want
+     * @param toReturn a list of {@link Bukget.Field}'s that the <code>BukgetPlugin</code> will contain.
+     * @return the <code>BukgetPlugin</code> or <code>null</code> if the plugin doesn't exist or if you didn't enter any {@link Bukget.Field}s
+     * @throws IOException if an error occurred during reading of the api
+     */
+    public static BukgetPlugin getPluginFromUrl(String url, Bukget.Version version, Bukget.Field... toReturn) throws IOException {
+        if (url.contains("dev.bukkit.org/")){
+            return getPluginFromSlug(url.substring(url.lastIndexOf("/")), version, toReturn);
+        }
+
+        return null;
+    }
+
+    /**
      * Gets the information for a plugin by it's slug
      * @param slug the plugin's slug
      * @param version the {@link Bukget.Version} of download files you want
