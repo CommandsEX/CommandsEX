@@ -49,12 +49,12 @@ public class BukgetPlugin {
 
         JsonObject jsonObject = new JsonParser().parse(WebHelper.readURLToString(new URL("http://api.bukget.org/3/plugins/bukkit/" + slug + "/" + version + "?size=1&fields=" + Utils.join(toReturn, ",")))).getAsJsonObject();
 
-        if(jsonObject.isJsonNull())
+        if(jsonObject.isJsonNull() || jsonObject.getAsJsonArray("versions").isJsonNull())
             return null;
 
         Map<Bukget.Field, String> values = new HashMap<>();
 
-        JsonObject versions = jsonObject.getAsJsonObject("versions"), popularity = jsonObject.getAsJsonObject("popularity");
+        JsonObject versions = jsonObject.getAsJsonArray("versions").get(0).getAsJsonObject(), popularity = jsonObject.getAsJsonObject("popularity");
 
         for(Bukget.Field field : toReturn)
             switch (field) {
