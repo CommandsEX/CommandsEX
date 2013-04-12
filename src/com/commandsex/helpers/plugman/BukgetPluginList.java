@@ -80,7 +80,7 @@ public class BukgetPluginList {
      * @param field the field
      * @param action the action
      * @param value the value
-     * @param sortBy how you want the results to be sorted. <b>Note:</b> this field can be negated
+     * @param sortBy how you want the results to be sorted. <b>Note:</b> this field can be negated to do an inverse sort
      * @return the sorted list of plugins
      * @throws IOException if an error occurs during the reading of the api
      */
