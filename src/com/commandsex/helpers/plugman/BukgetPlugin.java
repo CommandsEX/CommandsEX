@@ -92,9 +92,13 @@ public class BukgetPlugin {
                     values.put(field, versions.get("slug").getAsString());
                     break;
                 case HARD_DEPENDENCIES:
+                    if(versions.getAsJsonArray("hard_dependencies").isJsonNull())
+                        break;
                     values.put(field, WebHelper.joinJsonArray(versions.getAsJsonArray("hard_dependencies"), ", "));
                     break;
                 case SOFT_DEPENDENCIES:
+                    if(versions.getAsJsonArray("soft_dependencies").isJsonNull())
+                        break;
                     values.put(field, WebHelper.joinJsonArray(versions.getAsJsonArray("soft_dependencies"), ", "));
                     break;
                 case POPULARITY_DAILY:
