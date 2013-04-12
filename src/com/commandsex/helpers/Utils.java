@@ -93,7 +93,7 @@ public class Utils {
     public static String join(Object[] array, String glueString){
         return join(array, glueString, glueString);
     }
-    
+
     /**
      * Joins objects together with the glueString starting at startIndex
      * @param array the array of objects to be joined
