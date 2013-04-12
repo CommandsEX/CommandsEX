@@ -4,14 +4,10 @@ import static org.jooq.impl.Factory.field;
 import static org.jooq.impl.Factory.tableByName;
 import static org.jooq.impl.Factory.value;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.security.CodeSource;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +15,7 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import com.commandsex.interfaces.EnableJob;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -31,7 +28,6 @@ import org.jooq.Table;
 import com.commandsex.database.Database;
 import com.commandsex.database.MySqlDatabase;
 import com.commandsex.helpers.LogHelper;
-import com.commandsex.interfaces.EnableJob;
 import com.google.common.io.ByteStreams;
 
 /**
@@ -48,47 +44,53 @@ public class Language implements EnableJob {
     /**
      * Run when CommandsEX is enabled
      */
-    public void onEnable(PluginManager pluginManager){
+    public static void init(){
         database = CommandsEX.database;
         // create language database if it does not already exist
-        database.getExecutor().execute("CREATE TABLE IF NOT EXISTS " + database.getPrefix() + "userlangs (username varchar(50) NOT NULL, lang varchar(5) NOT NULL)" + (CommandsEX.database instanceof MySqlDatabase ? " ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='stores per-user selected plugin language'" : ""));
+        try {
+            database.getConnection().createStatement().execute("CREATE TABLE IF NOT EXISTS " + database.getPrefix() + "userlangs (username varchar(50) NOT NULL, lang varchar(5) NOT NULL)" + (CommandsEX.database instanceof MySqlDatabase ? " ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='stores per-user selected plugin language'" : ""));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            LogHelper.logSevere("Unable to connect to create the language table, disabling...");
+            CommandsEX.pluginManager.disablePlugin(CommandsEX.plugin);
+            return;
+        }
 
         if (!langFolder.exists()){
             langFolder.mkdir();
         }
 
-        CodeSource src = getClass().getProtectionDomain().getCodeSource();
+        CodeSource src = Language.class.getProtectionDomain().getCodeSource();
         if (src != null){
             URL jar = src.getLocation();
             try {
                 ZipInputStream zipInputStream = new ZipInputStream(jar.openStream());
 
                 try {
-                    ZipEntry ze = null;
-
+                    ZipEntry ze;
                     while ((ze = zipInputStream.getNextEntry()) != null){
                         String name = ze.getName();
 
                         try {
                             if (name.startsWith("lang/lang_") && name.endsWith(".properties")){
                                 File file = new File(CommandsEX.plugin.getDataFolder(), "langs" + name.replaceFirst("lang", ""));
+                                InputStream jarLangInputStream = Language.class.getResourceAsStream("/" + name);
 
-                                if (!file.exists()){
-                                    InputStream inputStream = getClass().getResourceAsStream("/" + name);
-
-                                    try {
-                                        if (inputStream != null){
+                                try {
+                                    if (!file.exists()){
+                                        // Copy the file from the JAR to the CommandsEX data folder
+                                        if (jarLangInputStream != null){
                                             FileOutputStream fileOutputStream = new FileOutputStream(file);
 
                                             try {
-                                                ByteStreams.copy(inputStream, fileOutputStream);
+                                                ByteStreams.copy(jarLangInputStream, fileOutputStream);
                                             } finally {
                                                 fileOutputStream.close();
                                             }
                                         }
-                                    } finally {
-                                        inputStream.close();
                                     }
+                                } finally {
+                                    jarLangInputStream.close();
                                 }
                             }
                         } finally {
@@ -116,7 +118,7 @@ public class Language implements EnableJob {
         // Lastly it will load the language file
         for (File file : files){
             if (CommandsEX.config.getDouble("lastVersion") < Double.parseDouble(CommandsEX.plugin.getDescription().getVersion())){
-                InputStream inputStream = getClass().getResourceAsStream("/lang/" + file.getName());
+                InputStream inputStream = Language.class.getResourceAsStream("/lang/" + file.getName());
 
                 if (inputStream != null){
                     try {
@@ -153,7 +155,7 @@ public class Language implements EnableJob {
                         boolean propertiesChanged = false;
 
                         try {
-                            InputStream inputStream = getClass().getResourceAsStream("/lang/" + file.getName());
+                            InputStream inputStream = Language.class.getResourceAsStream("/lang/" + file.getName());
 
                             if (inputStream != null){
                                 Properties jarProperties = new Properties();
@@ -172,7 +174,6 @@ public class Language implements EnableJob {
 
                         // Only save if properties if it has actually been changed
                         if (propertiesChanged){
-                            System.out.print("6");
                             LogHelper.logInfo(file.getPath() + " had missing language entries, adding defaults");
                             FileOutputStream fileOutputStream = new FileOutputStream(file);
                             try {
@@ -210,7 +211,12 @@ public class Language implements EnableJob {
                 LogHelper.logSevere("The language name " + languageName + "is too long\nPlease make sure it is 5 characters or less");
             }
         }
+    }
 
+    /**
+     * Load player languages after dependencies (such as JOOQ) have been enabled
+     */
+    public void onEnable(PluginManager pluginManager){
         // Load player languages into HashMap
         Result<Record> result = database.getExecutor().select().from(database.getPrefix() + "userlangs").fetch();
 

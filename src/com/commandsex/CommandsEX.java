@@ -49,13 +49,6 @@ public class CommandsEX extends JavaPlugin {
         logger = Bukkit.getLogger();
         config = getConfig();
         config.options().copyDefaults(true);
-
-        try {
-            metrics = new Metrics(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         pluginManager = getServer().getPluginManager();
 
         if (!(Bukkit.getServer() instanceof CraftServer)){
@@ -94,6 +87,19 @@ public class CommandsEX extends JavaPlugin {
             e.printStackTrace();
             LogHelper.logSevere("Error while connecting to CommandsEX database, disabling plugin...");
             pluginManager.disablePlugin(this);
+        }
+
+        // Initialize languages
+        Language.init();
+
+        Libraries.registerLibrary("reflections-0.9.9-RC1", "http://www.commandsex.com/downloads/dependencies/reflections-0.9.9-RC1.jar");
+        Libraries.registerLibrary("metrics-R6", "http://www.commandsex.com/downloads/dependencies/metrics-R6.jar");
+        Libraries.registerLibrary("jooq-3.0.0-RC2", "http://www.commandsex.com/downloads/dependencies/jooq-3.0.0-RC2.jar");
+
+        try {
+            metrics = new Metrics(this);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         // get the command map
@@ -201,7 +207,6 @@ public class CommandsEX extends JavaPlugin {
         }
 
         config.set("lastVersion", Double.parseDouble(getDescription().getVersion()));
-        config.options().copyDefaults(true);
         saveConfig();
 
         LogHelper.logDebug("Successfully registered " + commandsRegistered + " commands and " + eventsRegistered + " events");
