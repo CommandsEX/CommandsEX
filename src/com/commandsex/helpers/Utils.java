@@ -11,8 +11,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Utils {
 
@@ -94,6 +92,20 @@ public class Utils {
      */
     public static String join(Object[] array, String glueString){
         return join(array, glueString, glueString);
+    }
+    
+    /**
+     * Joins objects together with the glueString starting at startIndex
+     * @param array the array of objects to be joined
+     * @param glueString the string to glue them with
+     * @param startIndex where to start
+     * @return the joined string
+     */
+    public static String join(Object[] array, String glueString, int startIndex) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = startIndex; i < array.length; i++)
+            sb.append(array[i]).append(" ");
+        return sb.toString().trim();
     }
 
     /**

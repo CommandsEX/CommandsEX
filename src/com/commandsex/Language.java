@@ -248,6 +248,17 @@ public class Language implements EnableJob {
             return getTranslationForLanguage(getDefaultLanguage(), key, args);
         }
     }
+    
+    /**
+     * A shortened version of <code>getTranslationForSender()</code> designed to be statically imported for easier use.
+     * @param sender The CommandSender to get the translation for
+     * @param key The message to get
+     * @param args Formatting arguments
+     * @return The translated message
+     */
+    public static String _(CommandSender sender, String key, Object...args) {
+        return getTranslationForSender(sender, key, args);
+    }
 
     /**
      * Gets a translation for a user (player)
