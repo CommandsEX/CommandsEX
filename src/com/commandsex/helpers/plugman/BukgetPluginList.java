@@ -7,17 +7,27 @@ import org.json.simple.JSONObject;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class BukgetPluginList {
-    private String[][] arr;
+    private String[][] arr;// {id, {slug, name, description}}
+    private TreeMap<Integer, String> idNameMap = null;
 
     private BukgetPluginList(String[][] plugins) {
         this.arr = plugins;
     }
 
-    public Map<Integer, String> getIDNameMap() {
-        Map<Integer, String> returnMe = new HashMap<>();
-        return null;
+    public TreeMap<Integer, String> getIDNameMap() {
+        if(idNameMap != null)
+            return idNameMap;
+
+        TreeMap<Integer, String> returnMe = new TreeMap<>();
+        for(String[] single : arr) {
+
+        }
+
+        idNameMap = returnMe;
+        return returnMe;
     }
 
     public String getDescriptionFromID(int id) {
@@ -32,7 +42,7 @@ public class BukgetPluginList {
      * START STATIC METHODS
      */
 
-    public static BukgetPluginList getFromQuery(int results, Bukget.Field field, Bukget.SearchAction action, String value, int amount, Bukget.Field toReturn) throws IOException {
+    public static BukgetPluginList getFromQuery(int results, Bukget.Field field, Bukget.SearchAction action, String value, int amount) throws IOException {
         return null;
     }
 
