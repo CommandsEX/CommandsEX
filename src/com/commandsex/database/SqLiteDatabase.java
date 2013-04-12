@@ -35,6 +35,10 @@ public class SqLiteDatabase implements Database {
         return connected;
     }
 
+    public Connection getConnection(){
+        return connection;
+    }
+
     public Executor getExecutor() {
         return new Executor(connection, SQLDialect.SQLITE);
     }
