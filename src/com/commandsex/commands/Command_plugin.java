@@ -126,7 +126,7 @@ public class Command_plugin implements Command {
 
                 if (playerConfirmations.containsKey(sName) && playerConfirmations.get(sName).equalsIgnoreCase(args[1])){
                     try {
-                        BukgetPlugin bukgetPlugin = BukgetPlugin.getPluginFromList(bukgetPluginList, 00, Bukget.Version.LATEST, Bukget.Field.PLUGIN_NAME, Bukget.Field.VERSION, Bukget.Field.DOWNLOAD_LINK);
+                        BukgetPlugin bukgetPlugin = BukgetPlugin.getPluginFromList(bukgetPluginList, 0, Bukget.Version.LATEST, Bukget.Field.PLUGIN_NAME, Bukget.Field.VERSION, Bukget.Field.DOWNLOAD_LINK);
                         String downloadUrl = bukgetPlugin.getFieldValue(Bukget.Field.DOWNLOAD_LINK);
                         File file = new File("plugins/" + downloadUrl.substring(downloadUrl.lastIndexOf("/")));
 

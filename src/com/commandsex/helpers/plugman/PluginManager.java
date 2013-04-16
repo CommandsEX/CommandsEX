@@ -49,7 +49,6 @@ public class PluginManager implements EnableJob {
     public static Plugin getPlugin(String name){
         List<Plugin> matches = new ArrayList<>();
 
-        
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins()){
             String pluginName = plugin.getName().replaceAll(" ", "");
 
