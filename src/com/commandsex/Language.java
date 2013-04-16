@@ -279,7 +279,21 @@ public class Language implements EnableJob {
      * @return The translated message
      */
     public static String getTranslationForLanguage(String language, String key, Object...args){
-        return String.format(ChatColor.translateAlternateColorCodes('&', (getLanguage(language) != null ? getLanguage(language).getProperty(key) : key)), args);
+        Properties langProperties = getLanguage(language);
+
+        if (langProperties == null){
+            LogHelper.logSevere("Language " + language + " was not found");
+            return ChatColor.RED + "The language " + ChatColor.GOLD + language + ChatColor.RED + " wasn't found";
+        }
+
+        String langValue = langProperties.getProperty(key);
+
+        if (langValue == null){
+            LogHelper.logSevere("Translation for " + key + " was not found for the language " + language);
+            return ChatColor.RED + "Translation for " + ChatColor.GOLD + key + ChatColor.RED + " wasn't found for the language " + ChatColor.GOLD + language;
+        }
+
+        return ChatColor.translateAlternateColorCodes('&', String.format(langValue, args));
     }
 
     /**
