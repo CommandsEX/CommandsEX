@@ -127,12 +127,6 @@
       <version>1.5.1-R0.2-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>com.restfb</groupId>
-      <artifactId>restfb</artifactId>
-      <version>1.6.12</version>
-      <scope>compile</scope>
-    </dependency>
   </dependencies>
   <reporting>
     <plugins>
