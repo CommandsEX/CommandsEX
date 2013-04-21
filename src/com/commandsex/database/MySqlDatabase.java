@@ -33,6 +33,10 @@ public class MySqlDatabase implements Database {
         return connected;
     }
 
+    public Connection getConnection(){
+        return connection;
+    }
+
     public Executor getExecutor() {
         return new Executor(connection, SQLDialect.MYSQL);
     }

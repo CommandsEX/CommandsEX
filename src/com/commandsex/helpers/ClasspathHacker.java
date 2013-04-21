@@ -17,18 +17,18 @@ public class ClasspathHacker {
     private static final Class<?>[] parameters = new Class[]{URL.class};
 
     /**
-     * Adds a file to the System ClassLoader
-     * @param file The file to add to the ClassLoader
-     * @return Was the the file successfully added to the system class-loader
+     * Adds a file to the class-loader
+     * @param file The file to add to the class-loader
+     * @return Was the the file successfully added to the class-loader
      */
     public static boolean addFile(String file) {
         return addFile(new File(file));
     }
 
     /**
-     * Adds a file to the System ClassLoader
-     * @param file The file to add to the ClassLoader
-     * @return Was the the file successfully added to the system class-loader
+     * Adds a file to the class-loader
+     * @param file The file to add to the class-loader
+     * @return Was the the file successfully added to the class-loader
      */
     public static boolean addFile(File file) {
         try {
@@ -40,12 +40,12 @@ public class ClasspathHacker {
     }
 
     /**
-     * Adds a URL to the System ClassLoader
-     * @param url The URL to add to the ClassLoader
-     * @return Was the the url successfully added to the system class-loader
+     * Adds a URL to the class-loader
+     * @param url The URL to add to the class-loader
+     * @return Was the the url successfully added to the class-loader
      */
     public static boolean addURL(URL url) {
-        URLClassLoader systemClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        URLClassLoader systemClassLoader = (URLClassLoader) ClasspathHacker.class.getClassLoader();
         Class<?> systemClassLoaderClass = URLClassLoader.class;
 
         try {

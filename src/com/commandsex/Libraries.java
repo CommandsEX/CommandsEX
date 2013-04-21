@@ -1,13 +1,12 @@
 package com.commandsex;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
+import com.commandsex.helpers.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -61,17 +60,20 @@ public class Libraries {
             return LoadingResult.INVALID_DOWNLOAD_URL;
         }
         
-        File downloadedLib = new File(getLibFolder().getAbsolutePath() + File.separator + name + ".jar");
+        File downloadedLib = new File(getLibFolder(), name + ".jar");
         
-        if(!downloadedLib.exists())
-            try {
-                FileUtils.copyURLToFile(downloadLink, downloadedLib);
-            } catch (IOException e) {
+        if(!downloadedLib.exists()){
+            LogHelper.logInfo(Language.getTranslationForSender(Bukkit.getConsoleSender(), "libraryDownloading", name));
+            boolean success = Utils.downloadWithProgress(downloadLink, downloadedLib);
+
+            if (!success){
                 return LoadingResult.LIBRARY_DOWNLOAD_ERROR;
             }
-        
+
+            LogHelper.logInfo(Language.getTranslationForSender(Bukkit.getConsoleSender(), "libraryDownloaded", name));
+        }
+
         if(ClasspathHacker.addFile(downloadedLib)) {
-            LogHelper.logDebug(Language.getTranslationForSender(Bukkit.getConsoleSender(), "libraryLoaded"));
             libraries.add(name.toUpperCase());
             return LoadingResult.LIBRARY_SUCCESSFULLY_LOADED;
         } else
