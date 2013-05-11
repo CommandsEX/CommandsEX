@@ -45,21 +45,6 @@ public class Language implements EnableJob {
      * Run when CommandsEX is enabled
      */
     public static void init(){
-        database = CommandsEX.database;
-        // create language database if it does not already exist
-        try {
-            database.getConnection().createStatement().execute("CREATE TABLE IF NOT EXISTS " + database.getPrefix() + "userlangs (username varchar(50) NOT NULL, lang varchar(5) NOT NULL)" + (CommandsEX.database instanceof MySqlDatabase ? " ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='stores per-user selected plugin language'" : ""));
-        } catch (SQLException e) {
-            e.printStackTrace();
-            LogHelper.logSevere("Unable to connect to create the language table, disabling...");
-            CommandsEX.pluginManager.disablePlugin(CommandsEX.plugin);
-            return;
-        }
-
-        if (!langFolder.exists()){
-            langFolder.mkdir();
-        }
-
         CodeSource src = Language.class.getProtectionDomain().getCodeSource();
         if (src != null){
             URL jar = src.getLocation();
@@ -217,6 +202,21 @@ public class Language implements EnableJob {
      * Load player languages after dependencies (such as JOOQ) have been enabled
      */
     public void onEnable(PluginManager pluginManager){
+        database = CommandsEX.database;
+        // create language database if it does not already exist
+        try {
+            database.getConnection().createStatement().execute("CREATE TABLE IF NOT EXISTS " + database.getPrefix() + "userlangs (username varchar(50) NOT NULL, lang varchar(5) NOT NULL)" + (CommandsEX.database instanceof MySqlDatabase ? " ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='stores per-user selected plugin language'" : ""));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            LogHelper.logSevere("Unable to connect to create the language table, disabling...");
+            CommandsEX.pluginManager.disablePlugin(CommandsEX.plugin);
+            return;
+        }
+
+        if (!langFolder.exists()){
+            langFolder.mkdir();
+        }
+
         // Load player languages into HashMap
         Result<Record> result = database.getExecutor().select().from(database.getPrefix() + "userlangs").fetch();
 

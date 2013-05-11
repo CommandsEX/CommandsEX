@@ -58,6 +58,9 @@ public class CommandsEX extends JavaPlugin {
             return;
         }
 
+        // Initialize languages
+        Language.init();
+
         Libraries.registerLibrary("jooq-3.0.0-RC2", "http://www.commandsex.com/downloads/dependencies/jooq-3.0.0-RC2.jar");
 
         try {
@@ -90,9 +93,6 @@ public class CommandsEX extends JavaPlugin {
             LogHelper.logSevere("Error while connecting to CommandsEX database, disabling plugin...");
             pluginManager.disablePlugin(this);
         }
-
-        // Initialize languages
-        Language.init();
 
         Libraries.registerLibrary("reflections-0.9.9-RC1", "http://www.commandsex.com/downloads/dependencies/reflections-0.9.9-RC1.jar");
         Libraries.registerLibrary("javassist", "http://www.commandsex.com/downloads/dependencies/javassist.jar");
