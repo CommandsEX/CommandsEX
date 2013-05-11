@@ -58,6 +58,10 @@ public class CommandsEX extends JavaPlugin {
             return;
         }
 
+        if (!getDataFolder().exists()){
+            getDataFolder().mkdir();
+        }
+
         // Initialize languages
         Language.init();
 

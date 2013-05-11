@@ -45,6 +45,10 @@ public class Language implements EnableJob {
      * Run when CommandsEX is enabled
      */
     public static void init(){
+        if (!langFolder.exists()){
+            langFolder.mkdir();
+        }
+
         CodeSource src = Language.class.getProtectionDomain().getCodeSource();
         if (src != null){
             URL jar = src.getLocation();
