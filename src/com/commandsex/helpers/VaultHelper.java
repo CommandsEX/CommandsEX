@@ -15,6 +15,7 @@ public class VaultHelper implements EnableJob {
     private static Permission permission = null;
     private static Economy economy = null;
     private static Chat chat = null;
+    private static boolean vaultAvailable = false;
 
     @Override
     public void onEnable(PluginManager pluginManager) {
@@ -22,6 +23,8 @@ public class VaultHelper implements EnableJob {
             LogHelper.logInfo(_(Bukkit.getConsoleSender(), "vaultNotFound"));
             return;
         }
+
+        vaultAvailable = true;
         
         // Setup permission
         RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
@@ -44,7 +47,15 @@ public class VaultHelper implements EnableJob {
             LogHelper.logDebug(_(Bukkit.getConsoleSender(), "vaultChat", chat.getName()));
         }
     }
-    
+
+    /**
+     * Checks if the Vault plugin is enabled
+     * @return Is the Vault plugin available
+     */
+    public static boolean isVaultAvailable(){
+        return vaultAvailable;
+    }
+
     /**
      * Gets the current Permission provider
      * @return the provider or <code>null</code> if not found

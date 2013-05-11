@@ -181,4 +181,13 @@ public class Utils {
         return downloadInstance.getStatus() != Download.Status.FAILED;
     }
 
+    /**
+     * Converts a string such as SMOOTH_BRICK to a more user friendly version such as Smooth Brick
+     * @param string The string to get the user friendly name of
+     * @return The user friendly name
+     */
+    public static String userFriendlyName(String string){
+        return WordUtils.capitalize(string.replaceAll("_", " ").toLowerCase());
+    }
+
 }
