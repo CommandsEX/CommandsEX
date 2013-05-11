@@ -58,6 +58,8 @@ public class CommandsEX extends JavaPlugin {
             return;
         }
 
+        Libraries.registerLibrary("jooq-3.0.0-RC2", "http://www.commandsex.com/downloads/dependencies/jooq-3.0.0-RC2.jar");
+
         try {
             LogHelper.logInfo("Connecting to CommandsEX database...");
 
