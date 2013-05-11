@@ -27,7 +27,7 @@ public class Command_fly implements Command {
 		
 		if(args == null || args.length == 0) { //Toggle self
 			Fly.toggle((Player) sender);
-			sender.sendMessage(_(sender, (((Player)sender).getAllowFlight() ? "flySetOn" : "flySetOff")));
+			sender.sendMessage(_(sender, (((Player)sender).getAllowFlight() ? "flySetOn" : "flySetOff"), sender.getName()));
 			return true;
 		}
 		

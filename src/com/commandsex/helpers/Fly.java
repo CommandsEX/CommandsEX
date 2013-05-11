@@ -49,7 +49,7 @@ public class Fly implements EnableJob, Listener {
 	}
 	
 	public static void set(Player player, boolean on) {
-		player.setAllowFlight(false);
+		player.setAllowFlight(on);
 		if(!on)
 			player.setFlying(false);
 	}
