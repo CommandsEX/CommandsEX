@@ -161,7 +161,7 @@ public class Utils {
             @Override
             public void run() {
                 while (downloadInstance.getStatus() == Download.Status.DOWNLOADING){
-                    LogHelper.logInfo(Language.getTranslationForSender(Bukkit.getConsoleSender(), "libraryDownloadingProgress", downloadInstance.getDownloadedSize(), downloadInstance.getProgress(), downloadInstance.getTotalSize()));
+                    LogHelper.logInfo(Language.getTranslationForSender(Bukkit.getConsoleSender(), "libraryDownloadingProgress", humanReadableByteCount(downloadInstance.getDownloadedSize(), true), downloadInstance.getProgress(), humanReadableByteCount(downloadInstance.getTotalSize(), true)));
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {
@@ -179,6 +179,20 @@ public class Utils {
         }
 
         return downloadInstance.getStatus() != Download.Status.FAILED;
+    }
+    
+    /**
+     * Converts bytes to a human readable form
+     * @param bytes The amount of bytes
+     * @param si Whether to use SI or binary
+     * @return The size in human readable form
+     */
+    public static String humanReadableByteCount(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
 }
