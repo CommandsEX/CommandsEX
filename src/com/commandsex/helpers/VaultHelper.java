@@ -12,9 +12,9 @@ import com.commandsex.interfaces.EnableJob;
 import static com.commandsex.Language._;
 
 public class VaultHelper implements EnableJob {
-    private static Permission p = null;
-    private static Economy e = null;
-    private static Chat c = null;
+    private static Permission permission = null;
+    private static Economy economy = null;
+    private static Chat chat = null;
 
     @Override
     public void onEnable(PluginManager pluginManager) {
@@ -26,22 +26,22 @@ public class VaultHelper implements EnableJob {
         // Setup permission
         RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
         if(permissionProvider != null) {
-            p = permissionProvider.getProvider();
-            LogHelper.logDebug(_(Bukkit.getConsoleSender(), "vaultPermission", p.getName()));
+            permission = permissionProvider.getProvider();
+            LogHelper.logDebug(_(Bukkit.getConsoleSender(), "vaultPermission", permission.getName()));
         }
         
         // Setup economy
         RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         if(economyProvider != null) {
-            e = economyProvider.getProvider();
-            LogHelper.logDebug(_(Bukkit.getConsoleSender(), "vaultEconomy", e.getName()));
+            economy = economyProvider.getProvider();
+            LogHelper.logDebug(_(Bukkit.getConsoleSender(), "vaultEconomy", economy.getName()));
         }
         
         // Setup chat
         RegisteredServiceProvider<Chat> chatProvider = Bukkit.getServer().getServicesManager().getRegistration(Chat.class);
         if(chatProvider != null) {
-            c = chatProvider.getProvider();
-            LogHelper.logDebug(_(Bukkit.getConsoleSender(), "vaultChat", c.getName()));
+            chat = chatProvider.getProvider();
+            LogHelper.logDebug(_(Bukkit.getConsoleSender(), "vaultChat", chat.getName()));
         }
     }
     
@@ -50,7 +50,15 @@ public class VaultHelper implements EnableJob {
      * @return the provider or <code>null</code> if not found
      */
     public static Permission getPermission() {
-        return p;
+        return permission;
+    }
+
+    /**
+     * Checks if permissions are available and returns the result
+     * @return Are Permissions available?
+     */
+    public static boolean isPermissionsAvailable(){
+        return permission != null;
     }
     
     /**
@@ -58,7 +66,15 @@ public class VaultHelper implements EnableJob {
      * @return the provider or <code>null</code> if not found
      */
     public static Economy getEconomy() {
-        return e;
+        return economy;
+    }
+
+    /**
+     * Checks if economy is available and returns the result
+     * @return Is Economy available?
+     */
+    public static boolean isEconomyAvailable(){
+        return economy != null;
     }
     
     /**
@@ -66,7 +82,15 @@ public class VaultHelper implements EnableJob {
      * @return the provider or <code>null</code> if not found
      */
     public static Chat getChat() {
-        return c;
+        return chat;
+    }
+
+    /**
+     * Checks if Chat is available and returns the result
+     * @return Is Chat available?
+     */
+    public static boolean isChatAvailable(){
+        return chat != null;
     }
 
 }
