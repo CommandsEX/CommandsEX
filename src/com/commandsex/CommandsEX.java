@@ -6,7 +6,7 @@ import com.commandsex.database.MySqlDatabase;
 import com.commandsex.database.SqLiteDatabase;
 import com.commandsex.interfaces.DisableJob;
 import com.commandsex.interfaces.EnableJob;
-import org.bukkit.craftbukkit.v1_5_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_5_R3.CraftServer;
 
 import java.io.File;
 import java.io.IOException;
