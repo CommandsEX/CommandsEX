@@ -41,7 +41,7 @@ public class Command_hat implements Command, EnableJob {
             }
             
             if(player.getItemInHand().getTypeId() == 0 || !player.getItemInHand().getType().isSolid()) {
-                player.sendMessage(Language.getTranslationForSender(player, "hatOwnInvalidItem", Utils.getFriendlyMaterialName(player.getItemInHand().getType())));
+                player.sendMessage(Language.getTranslationForSender(player, "hatOwnInvalidItem", Utils.getFriendlyName(player.getItemInHand().getType().name())));
                 return true;
             }
             
@@ -74,7 +74,7 @@ public class Command_hat implements Command, EnableJob {
             }
             
             if(!Material.getMaterial(Integer.parseInt(args[0])).isSolid()) {
-                player.sendMessage(Language.getTranslationForSender(player, "hatOwnInvalidItem", Utils.getFriendlyMaterialName(Material.getMaterial(Integer.parseInt(args[0])))));
+                player.sendMessage(Language.getTranslationForSender(player, "hatOwnInvalidItem", Utils.getFriendlyName(Material.getMaterial(Integer.parseInt(args[0])).name())));
                 return true;
             }
             
@@ -111,7 +111,7 @@ public class Command_hat implements Command, EnableJob {
             }
             
             if(!Material.getMaterial(Integer.parseInt(args[0])).isSolid()) {
-                player.sendMessage(Language.getTranslationForSender(player, "hatInvalidItem", Utils.getFriendlyMaterialName(Material.getMaterial(Integer.parseInt(args[0]))), target.getName()));
+                player.sendMessage(Language.getTranslationForSender(player, "hatInvalidItem", Utils.getFriendlyName(Material.getMaterial(Integer.parseInt(args[0])).name()), target.getName()));
                 return true;
             }
             

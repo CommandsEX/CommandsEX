@@ -96,7 +96,7 @@ public class Command_give implements Command, EnableJob {
         target.getInventory().addItem(itemStack);
 
         String userFriendlyAmount = String.valueOf((amount % 64 == 0 ? (amount == 64 ? Language.getTranslationForSender(sender, "giveAStackOf") : Language.getTranslationForSender(sender, "giveStacksOf", amount / 64)) : (amount == 1 ? WordUtils.capitalize(Language.getTranslationForSender(sender, "a")) : String.valueOf(amount))));
-        String friendlyName = Utils.userFriendlyName(material.name());
+        String friendlyName = Utils.getFriendlyName(material.name());
         String userFriendlyName = friendlyName + (amount > 1 ? "s" : "");
 
         if (target == sender){

@@ -103,12 +103,17 @@ public class WebHelper {
      * @return the shortened url as a string
      */
     public static String shortenURL(String url) {
-        try {
-            String str = readURLToString(new URL("http://v.gd/create.php?format=simple&url=" + url));
-            return String.format("%swww.%s", str.substring(0, 7), str.substring(7));
-        } catch (IOException e) {
-            return null;
+        URL foundUrl = Utils.getUrl(url);
+
+        if (foundUrl != null){
+            try {
+                return readURLToString(new URL("http://is.gd/create.php?format=simple&url=" + url)) + "-";
+            } catch (Throwable e) {
+                return null;
+            }
         }
+
+        return null;
     }
 
     /**

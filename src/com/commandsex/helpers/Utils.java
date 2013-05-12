@@ -7,12 +7,17 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
+
+    private static Pattern urlPattern = Pattern.compile("(^https?\\://)?[a-zA-Z0-9\\-\\.]+\\W+[a-zA-Z]{2,3}(/\\S*)?$", Pattern.CASE_INSENSITIVE);
 
     /**
      * Checks if a string is an integer
@@ -118,21 +123,12 @@ public class Utils {
     }
 
     /**
-     * Gets a user friendly version of a Material
-     * @param material the material to get
-     * @return the friendly version of the material
+     * Gets a user friendly version of a String, e.g. SMOOTH_BRICK would become Smooth Brick
+     * @param string The friendly name to get
+     * @return The friendly version of the String
      */
-    public static String getFriendlyMaterialName(Material material) {
-        return WordUtils.capitalize(material.name().replaceAll("_", ""));
-    }
-
-    /**
-     * Gets a user friendly version of an Item
-     * @param item the item to get
-     * @return the friendly version of the Item
-     */
-    public static String getFriendlyItemName(ItemStack item) {
-        return getFriendlyMaterialName(item.getType());
+    public static String getFriendlyName(String string) {
+        return WordUtils.capitalize(string.toLowerCase().replaceAll("_", ""));
     }
 
     /**
@@ -196,12 +192,34 @@ public class Utils {
     }
 
     /**
-     * Converts a string such as SMOOTH_BRICK to a more user friendly version such as Smooth Brick
-     * @param string The string to get the user friendly name of
-     * @return The user friendly name
+     * Checks a string for a URL
+     * @param s The string to check for a URL
+     * @return Does the string contain a URL?
      */
-    public static String userFriendlyName(String string){
-        return WordUtils.capitalize(string.replaceAll("_", " ").toLowerCase());
+    public static boolean containsUrl(String s){
+       return getUrl(s) != null;
     }
 
+    /**
+     * Gets the first URL in a string
+     * @param string The string to get the URL from
+     * @return The url, null if not found
+     */
+    public static URL getUrl(String string){
+        String[] parts = string.split(" ");
+
+        for (String part : parts){
+            Matcher matcher = urlPattern.matcher(part);
+
+            while (matcher.find()){
+                try {
+                    return new URL(matcher.group());
+                } catch (MalformedURLException e) {
+                    continue;
+                }
+            }
+        }
+
+        return null;
+    }
 }
