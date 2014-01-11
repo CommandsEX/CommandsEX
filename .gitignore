@@ -7,7 +7,7 @@
 /nbproject
 
 #IntelliJ
-/*.iml
+*.iml
 /.idea
 
 # various other potential build files
@@ -15,8 +15,8 @@
 /dist
 /manifest.mf
 /.fatjar
+/target
 
 # Mac filesystem dust
 .DS_Store
 .DS_Storetarget
-/target
